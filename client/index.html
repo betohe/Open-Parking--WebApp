@@ -32,7 +32,6 @@
   <link rel="stylesheet" href="bower_components/Materialize/dist/css/materialize.min.css">
 
   <!-- Compiled and minified JavaScript -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
@@ -43,6 +42,7 @@
       <!-- injector:css -->
       <!-- endinjector -->
     <!-- endbuild -->
+        <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   </head>
   <body ng-app="camarboardApp">
     <!--[if lt IE 7]>
@@ -50,9 +50,12 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <navbar></navbar>
+    <navbar class="white" role="navigation"></navbar>
     <div ng-view=""></div>
-    <footer></footer>
+    <footer class="page-footer teal">></footer>
+
+
+
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
     <script>
@@ -79,6 +82,7 @@
       <script src="bower_components/lodash/dist/lodash.compat.js"></script>
       <script src="bower_components/angular-socket-io/socket.js"></script>
       <script src="bower_components/angular-validation-match/dist/angular-validation-match.min.js"></script>
+      <script src="bower_components/Materialize/bin/materialize.js"></script>
       <!-- endbower -->
       <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
@@ -110,22 +114,25 @@
       <script src="app/account/signup/signup.controller.js"></script>
       <script src="components/util/util.service.js"></script>
       <!-- endinjector -->
+      
+        <!--  Scripts-->
+        <script src="js/init.js"></script>
         <!-- Angular Material requires Angular.js Libraries -->
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
-
-        <!-- Angular Material Library -->
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>        <!-- Angular Material Library -->
         <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
         
         <!-- Your application bootstrap  -->
-        <script type="text/javascript">    
+        <script type="text/javascript"> 
+        
+
           /**
            * You must include the dependency on 'ngMaterial' 
            */
           angular.module('BlankApp', ['ngMaterial']);
-        </script>
+        </script>        
     <!-- endbuild -->
   </body>
 </html>

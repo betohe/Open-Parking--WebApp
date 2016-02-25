@@ -10,9 +10,22 @@
     </div>
   </form>
 </div>
+<div class="row center">
+
+    <div class="preloader-wrapper big active">
+      <div class="spinner-layer spinner-blue">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+</div>
+
 <div class="row">
   <div class="col s9">
-    <img src="http://www.hdlivewebcams.net/wp-content/uploads/2014/10/loading-1.gif" id="remoteimg" width="100%">
     <video id='remoteVideo' autoplay width="100%" class="remote"></video>
   </div>
   <div class="col s3">
@@ -20,7 +33,3 @@
     <video id='localVideo' autoplay muted width="100%"></video>
   </div>
 </div>
-
-<script src='/socket.io/socket.io.js'></script>
-<script type="text/javascript" src="js/video.js"></script>
-<script type="text/javascript" src="js/materialize.min.js"></script>

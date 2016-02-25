@@ -8,6 +8,7 @@
          <li ng-show="nav.isLoggedIn()"><p class="navbar-text">Hello {{ nav.getCurrentUser().name }}</p> </li>
          <li ng-show="nav.isLoggedIn()" ng-class="{active: nav.isActive('/settings')}"><a href="/settings"><span class="glyphicon glyphicon-cog"></span></a></li>
          <li ng-show="nav.isLoggedIn()" ng-class="{active: nav.isActive('/dashboard')}"><a href="/dashboard">Dashboard</a></li>
+         <li ng-show="nav.isLoggedIn()" ng-class="{active: nav.isActive('/newchat')}"><a href="/newchat">New Chat</a></li>
          <li ng-show="nav.isLoggedIn()"><a href="/logout">Logout</a></li>
          <li ng-repeat="item in nav.menu" ng-class="{active: nav.isActive(item.link)}">
              <a ng-href="{{item.link}}">{{item.title}}</a>
@@ -21,6 +22,7 @@
          <li ng-show="nav.isLoggedIn()"><p class="navbar-text">Hello {{ nav.getCurrentUser().name }}</p> </li>
          <li ng-show="nav.isLoggedIn()" ng-class="{active: nav.isActive('/settings')}"><a href="/settings"><span class="glyphicon glyphicon-cog"></span></a></li>
          <li ng-show="nav.isLoggedIn()" ng-class="{active: nav.isActive('/dashboard')}"><a href="/dashboard">Dashboard</a></li>
+         <li ng-show="nav.isLoggedIn()" ng-class="{active: nav.isActive('/newchat')}"><a href="/newchat">New Chat</a></li>
          <li ng-show="nav.isLoggedIn()"><a href="/logout">Logout</a></li>
          <li ng-repeat="item in nav.menu" ng-class="{active: nav.isActive(item.link)}">
              <a ng-href="{{item.link}}">{{item.title}}</a>

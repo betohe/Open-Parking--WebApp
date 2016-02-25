@@ -1,8 +1,7 @@
 'use strict';
-//$('#remoteVideo').hide();
-//$('#localVideo').hide();
+$('#remoteVideo').hide();
+$('#localVideo').hide();
 
-var localuser;
 var remoteuser;
 
 var isChannelReady;
@@ -74,20 +73,15 @@ var constraints = {
 };
 
 function createConnection() {
-  if (user === '') {
-    user = document.getElementById("userId").value;
-  }
-
   if (room === '') {
     room = document.getElementById("roomId").value;
   }
 
-  if (user === '' || room === '') {
-    alert('Both Username and Room Name are Required.');
+  if (room === '') {
+    alert('Room Name is Required.');
     return false;
   }
-  $('.navbar-toggle').trigger('click');
-  localuser = document.getElementById("userId").value;
+  localuser = Math.random().toString(36).substring(7);
   if (room !== '') {
     socket.emit('create or join', room);
   }
@@ -95,9 +89,6 @@ function createConnection() {
   navigator.getUserMedia(constraints, handleUserMedia, handleUserMediaError);
   if(navigator.mozGetUserMedia) {
     isFirefox = true;
-  }
-  if (location.hostname != "localhost") {
-    requestTurn('https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913');
   }
 }
 
@@ -194,7 +185,7 @@ function handleUserMedia(stream) {
   localVideo.src = window.URL.createObjectURL(stream);
   localVideoStream = stream;
   sendMessage('Got user media');
-  $('#localimg').hide();
+  //$('#localimg').hide();
   $('#localVideo').show();
   if (isInitiator) {
     maybeStart();

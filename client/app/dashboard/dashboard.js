@@ -4,8 +4,9 @@ angular.module('camarboardApp')
   .config(function($routeProvider) {
     $routeProvider
       .when('/dashboard', {
-        templateUrl: 'app/main/main.html',
+        templateUrl: 'app/dashboard/dashboard.html',
         controller: 'DashboardController',
-        controllerAs: 'main'
+        controllerAs: 'dashboard',
+        authenticate: 'user'
       });
   });

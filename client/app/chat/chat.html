@@ -1,28 +1,115 @@
 <div class="container">
-  <form class="col s12" >
     <div class="row">
-    <div class="input-field col s8">
-      <input type="text" name="roomId" id="roomId">
-      <label for="roomId">Room</label>
+      <form class="col s12" >
+        <div class="input-field col s8">
+          <input type="text" name="roomId" id="roomId">
+          <label for="roomId">Room</label>
+        </div>
+        <div class="input-field col s4">
+          <input type="button" id="startButton" class="btn btn-success" value="Join"/>
+        </div>
+      </form>
     </div>
-    <div class="input-field col s4">
-      <input type="button" id="startButton" class="btn btn-success" value="Join"/>
-    </div>
-  </form>
-</div>
-<div class="row center">
 
-    <div class="preloader-wrapper big active">
-      <div class="spinner-layer spinner-blue">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div><div class="gap-patch">
-          <div class="circle"></div>
-        </div><div class="circle-clipper right">
-          <div class="circle"></div>
+  <div class="row center">
+
+      <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div><div class="gap-patch">
+            <div class="circle"></div>
+          </div><div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
         </div>
       </div>
+
+  </div>
 </div>
+
+<div class="row">
+
+      <div class="col s1"><img class="mini-icon" src="assets/images/baby.png"></div>
+      <div class="col s4 push-s6"><span class="flow-text">
+          <!-- People -->
+          <div class="card">
+            <div class="card-image">
+              <video id="gum-local" autoplay></video>
+              <div id="errorMsg"></div>
+              <span class="card-title">Joe</span>
+            </div>
+            <div class="card-action webcams">
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam2.jpg">
+              </div>
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam3.jpg">
+              </div>
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam4.jpg">
+              </div>
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam2.jpg">
+              </div>
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam3.jpg">
+              </div>
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam4.jpg">
+              </div>
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam2.jpg">
+              </div>
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam3.jpg">
+              </div>
+              <div class="card mini-webcam">
+                 <img class="mini-webcam-img" src="assets/images/webcam4.jpg">
+              </div>
+            </div>
+          </div>
+
+      </span></div>
+      <div class="col s6 pull-s4"><span class="flow-text">
+         <div class="card">
+          <div class="card-image waves-effect waves-block waves-light" style="text-align: center;">
+            <iframe width="500" height="315" src="http://www.youtube.com/embed/wz7AzH8qIwQ?autoplay=1"></iframe>
+          </div>
+          <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">how to play "Rock or Bust" on guitar by AC/DC...<i class="material-icons right">more_vert</i></span>
+            <!--<p><a href="#">This is a link</a></p>-->
+          </div>
+          <div class="card-reveal">
+            <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+            <p>Here is some more information about this product that is only revealed once clicked on.</p>
+          </div>
+        </div></span></div>
+      <div class="col s1"><img class="mini-icon" src="assets/images/baby.png"></div>
+    </div>
+
+    <div class="container">
+        <!-- Page Content goes here -->
+        <div class="row">
+          <div class="col s2"><a href=""><div class="card canvas-tool"><img class="" src="assets/images/Pencil Tip-100.png"></div></a></div>
+          <div class="col s2"><a href=""><div class="card canvas-tool"><img class="" src="assets/images/Erase Filled-100.png"></div></a></div>
+          <div class="col s2"><a href=""><div class="card canvas-tool"><img class="" src="assets/images/Diploma 1-96.png"></div></a></div>
+          <div class="col s2"><a href=""><div class="card canvas-tool"><img class="" src="assets/images/Text Box-100.png"></div></a></div>
+          <div class="col s1"><img class="mini-icon" src="assets/images/baby.png"></div>
+          <div class="col s1"><img class="mini-icon" src="assets/images/baby.png"></div>
+          <div class="col s1"><img class="mini-icon" src="assets/images/baby.png"></div>
+          <div class="col s1"><img class="mini-icon" src="assets/images/baby.png"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col s6 pull-s4"><span class="flow-text">
+         <div class="card">
+          <div class="card-image waves-effect waves-block waves-light" style="text-align: center;">
+            <img src="assets/images/canvas-dummy.png">
+          </div>
+        </div>
+        </span></div>
+    </div>
 
 <div class="row">
   <div class="col s9">
@@ -33,3 +120,8 @@
     <video id='localVideo' autoplay muted width="100%"></video>
   </div>
 </div>
+
+<script src='/socket.io/socket.io.js'></script>
+<script type="text/javascript" src="js/video.js"></script>
+
+

@@ -38,6 +38,7 @@ export default function(socketio) {
   // }));
 
   socketio.on('connection', function(socket) {
+    console.log()
     socket.address = socket.request.connection.remoteAddress +
       ':' + socket.request.connection.remotePort;
 

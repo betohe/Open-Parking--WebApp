@@ -74,7 +74,24 @@
       <div class="col s6 pull-s4"><span class="flow-text">
          <div class="card">
           <div class="card-image waves-effect waves-block waves-light" style="text-align: center;">
-            <iframe width="500" height="315" src="http://www.youtube.com/embed/wz7AzH8qIwQ?autoplay=1"></iframe>
+            <div> 
+               <input ng-model="loginInput" type = "text" id = "loginInput" /> 
+               <button ng-click=login() id = "loginBtn">Login</button> 
+            </div> 
+          
+            <div> 
+               <input ng-model="otherUsernameInput" type = "text" id = "otherUsernameInput" /> 
+               <button ng-click=connectToOtherUsername() id = "connectToOtherUsernameBtn">Establish connection</button> 
+            </div> 
+          
+            <div> 
+               <input ng-model="msgInput" type = "text" id = "msgInput" /> 
+               <button ng-click=sendMsg() id = "sendMsgBtn">Send text message</button> 
+            </div> 
+
+            <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+            <script src="./frontend.js"></script>-->
+           <!-- <iframe width="500" height="315" src="http://www.youtube.com/embed/wz7AzH8qIwQ?autoplay=1"></iframe>-->
           </div>
           <div class="card-content">
             <span class="card-title activator grey-text text-darken-4">how to play "Rock or Bust" on guitar by AC/DC...<i class="material-icons right">more_vert</i></span>
@@ -120,8 +137,7 @@
     <video id='localVideo' autoplay muted width="100%"></video>
   </div>
 </div>
-
-<script src='/socket.io/socket.io.js'></script>
-<script type="text/javascript" src="js/video.js"></script>
+<!--<script src='/socket.io/socket.io.js'></script>-->
+<!--<script type="text/javascript" src="js/video.js"></script>-->
 
 

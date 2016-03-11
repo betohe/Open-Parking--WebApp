@@ -83,12 +83,9 @@ class ChatController {
                  $scope.onOffer(data.offer, data.name); 
                  break; 
               case "answer": 
-
-                 console.log("call on answer");
                  $scope.onAnswer(data.answer); 
                  break; 
               case "candidate": 
-                 console.log("call on candidate");
                  $scope.onCandidate(data.candidate); 
                  break; 
               default: 
@@ -112,9 +109,10 @@ class ChatController {
              "iceServers": [{ "url": "stun:stun.1.google.com:19302" }] 
           }; 
         
-          $scope.myConnection = new webkitRTCPeerConnection(configuration, { 
+          /*$scope.myConnection = new webkitRTCPeerConnection(configuration, { 
              optional: [{RtpDataChannels: true}] 
-          }); 
+          }); */
+          $scope.myConnection = new webkitRTCPeerConnection(configuration, null); 
           
           console.log("RTCPeerConnection object was created"); 
           console.log($scope.myConnection); 
@@ -148,7 +146,6 @@ class ChatController {
     $scope.connectToOtherUsername  = function () { 
      
        var otherUsername = $scope.otherUsernameInput; 
-       console.log("Other user is"+otherUsername);
        $scope.connectedUser = otherUsername;
       
        if (otherUsername.length > 0) { 
@@ -169,7 +166,7 @@ class ChatController {
      
     //when somebody wants to call us 
     $scope.onOffer = function(offer, name) { 
-       $scope.connectedUser = name; 
+       $scope.connectedUser = name;
        $scope.myConnection.setRemoteDescription(new RTCSessionDescription(offer)); 
       
        $scope.myConnection.createAnswer(function (answer) { 
@@ -180,6 +177,7 @@ class ChatController {
           }); 
         
        }, function (error) { 
+          throw error;
           alert("oops...error"+error); 
        }); 
     }
@@ -192,18 +190,20 @@ class ChatController {
     //when we got ice candidate from another user 
     $scope.onCandidate = function(candidate) { 
 
-                 console.log("candidate received");
-       $scope.myConnection.addIceCandidate(new RTCIceCandidate(candidate)); 
+      console.log("candidate received");
+      console.log(candidate)
+      $scope.myConnection.addIceCandidate(new RTCIceCandidate(candidate)); 
     } 
 
     //creating data channel 
     $scope.openDataChannel = function() { 
 
-       var dataChannelOptions = { 
-          reliable:true 
-       }; 
+       var dataChannelOptions = ''; 
       console.log("setting up data channel");
-      $scope.dataChannel = $scope.myConnection.createDataChannel("myDataChannel", dataChannelOptions);
+      $scope.dataChannel = $scope.myConnection.createDataChannel("myDataChannel", { 
+          reliable:true
+       });
+      console.log($scope.dataChannel);
       
       console.log("data channel ready");
        $scope.dataChannel.onerror = function (error) { 
@@ -213,19 +213,23 @@ class ChatController {
        $scope.dataChannel.onmessage = function (event) { 
           console.log("Got message:", event.data); 
        };  
+       $scope.dataChannel.onopen = function(){console.log("------ DATACHANNEL OPENED ------");};
     }
       
     //when a user clicks the send message button 
     $scope.sendMsg =  function () { 
        console.log("scope send message");
+       console.log($scope.myConnection);
        console.log($scope.dataChannel);
        var val = $scope.msgInput; 
        $scope.dataChannel.send(val); 
+       console.log($scope.dataChannel);
     };
       
     // Alias for sending messages in JSON format 
     function send(message) { 
       console.log("send to server"+ message);
+      console.log($scope.myConnection);
        if ($scope.connectedUser) { 
           message.name = $scope.connectedUser; 
        } 

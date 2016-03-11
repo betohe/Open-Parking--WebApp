@@ -4,7 +4,7 @@
 
 'use strict';
 
-var ThingEvents = require('./chat.events');
+var ChatEvents = require('./chat.events');
 
 // Model events to emit
 var events = ['save', 'remove'];

@@ -5,6 +5,8 @@ var proxyquire = require('proxyquire').noPreserveCache();
 var chatCtrlStub = {
   index: 'chatCtrl.index',
   show: 'chatCtrl.show',
+  userowned: 'chatCtrl.userowned',
+  userbeen: 'chatCtrl.userbeen',
   create: 'chatCtrl.create',
   update: 'chatCtrl.update',
   destroy: 'chatCtrl.destroy'
@@ -44,15 +46,36 @@ describe('Chat API Router:', function() {
 
   });
 
-  describe('GET /api/chats/:id', function() {
+  describe('GET /api/chats', function() {
 
-    it('should route to chat.controller.show', function() {
+    it('should route to chat.controller.index', function() {
       routerStub.get
-        .withArgs('/:id', 'chatCtrl.show')
+        .withArgs('/', 'chatCtrl.index')
         .should.have.been.calledOnce;
     });
 
   });
+
+  describe('GET /api/chats/userowned/:id', function() {
+
+    it('should route to chat.controller.userowned', function() {
+      routerStub.get
+        .withArgs('/:uid', 'chatCtrl.userowned')
+        .should.have.been.calledOnce;
+    });
+
+  });
+
+  describe('GET /api/chats/userbeen/:uid', function() {
+
+    it('should route to chat.controller.userbeen', function() {
+      routerStub.get
+        .withArgs('/:uid', 'chatCtrl.userbeen')
+        .should.have.been.calledOnce;
+    });
+
+  });
+
 
   describe('POST /api/chats', function() {
 

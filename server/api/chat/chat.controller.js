@@ -66,6 +66,26 @@ export function index(req, res) {
     .catch(handleError(res));
 }
 
+// Get chats owned by the user
+
+exports.userowned = function(req, res) {
+  Chat.findAsync({ owner : req.params.uid })
+    .then(responseWithResult(res))
+    .catch(handleError(res));
+};
+
+// Get chats where the user has been
+
+exports.userbeen = function(req, res) {
+  Chat.findAsync()
+    .where('participants').elemMatch(function (elem) {
+      elem.where(req.params.uid, 'allowed')
+    })
+    .then(responseWithResult(res))
+    .catch(handleError(res));
+};
+
+
 // Gets a single Chat from the DB
 export function show(req, res) {
   Chat.findByIdAsync(req.params.id)

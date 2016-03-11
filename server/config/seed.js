@@ -6,6 +6,7 @@
 'use strict';
 import Thing from '../api/thing/thing.model';
 import User from '../api/user/user.model';
+import Chat from '../api/chat/chat.model';
 
 Thing.find({}).removeAsync()
   .then(() => {

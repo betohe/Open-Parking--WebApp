@@ -1,10 +1,19 @@
 <div class="home">
-  <h1 id="logo"><img src="/home/auth0_logo_final_blue_RGB.png" /></h1>
-  <img src="{{auth.profile.picture}}" />
-  <h2>Welcome {{auth.profile.nickname}}</h2>
-  <input ng-model="newTodo" type="text">
-  <button ng-click="addTodo()" >add</button>
-  <button ng-click="updateZone()" >calladmin</button>
-  <button class="btn btn-lg btn-primary" ng-click="callApi()">Call API</button> <br />
-  <button class="btn-sm btn-warning" ng-click="logout()">Logout</button>
+  <div class="row">
+    <div class="container" style="padding-top: 30px;">
+      <div class="row center">
+      <div class="card">
+          <div class="card-image waves-effect waves-block waves-light" id="chart" >
+          </div>
+          <div class="card-content" >
+            <span class="card-title activator grey-text text-darken-4">Estacionamiento ITESM</span>
+          </div>
+        </div>
+	  </div>
+	  <div class="row center">
+          				<h2>Welcome {{auth.profile.nickname}}</h2>
+          				<img src="{{auth.profile.picture}}" />
+              </div>
+	</div>
+  </div>
 </div>

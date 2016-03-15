@@ -1,36 +1,145 @@
-<navbar></navbar>
 <div class="home">
 
 	<div class="container">
           <div class="row">
             <div class="container">
-              <div id="chart"></div>
-              <gh-visualization></gh-visualization>
               <div class="row center">
-
-         				 <h1 id="logo"><img src="/home/auth0_logo_final_blue_RGB.png" /></h1>
           				<h2>Welcome Admin {{auth.profile.nickname}}</h2>
           				<img src="{{auth.profile.picture}}" />
+                  <div class="card padding" ng-repeat="zone in zones">
+                    <div class="row">
+                      <div class="input-field col s2">
+                         <h6 class="lite" for="roomId">{{zone.name}}</h6>
+                      </div>
+                      <div class="input-field col s2">
+                         <div id="canvas{{zone.id}}"></div>
+                         <p ng-repeat="subCategory in drawCanvas($index)">{{ subCategory.name }}</p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">ID</label>
+                      </div>
+                      <div class="input-field col s1">
+                          <input ng-model="zone.id" id="newzoneid" type="text">
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Nombre</label>
+                      </div>
+                      <div class="input-field col s3">
+                          <input ng-model="zone.name" id="newzoneid" type="text">
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">X</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.x" id="newzoneid" type="number">
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Y</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.y" id="newzoneid" type="number">
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Width</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.w" id="newzoneid" type="number">
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Height</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.h" id="newzoneid" type="number">
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Capacity</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.capacity" id="newzoneid" type="text">
+                      </div>
+                       <div class="input-field col s1">
+                         <label class="lite" for="roomId">Taken</label>
+                      </div>
+                      <div class="input-field col s1">
+                          <p>{{ zone.full }}</p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s3">
+                          <a ng-click="updateZone($index)" class="btn">Update</a>
+                      </div>
+                      <div class="input-field col s3">
+                          <a ng-click="updateZone($index)" class="btn">Cancel</a>
+                      </div>
+                    </div>
+                  </div>
               </div>
               <form class="col s12" >
+
+
+                <h5>New Zone</h5>
                 <div class="row">
-                  <div class="input-field col s8">
-  					<input ng-model="newTodo" type="text">
-                    <label class="lite" for="roomId">new Zone</label>
+                  <div class="input-field col s2">
+                     <label class="lite" for="roomId">ID</label>
                   </div>
-                  <div class="input-field col s4">
-                    <a ng-click="addTodo()" type="button" id="startButton" class="btn btn-success">add</a>
-                    <a ng-click="callApi()" type="button" id="startButton" class="btn btn-success">callApi</a>
+                  <div class="input-field col s7">
+                     <input ng-model="newZoneid" id="newzoneid" type="text">
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col s8">
-                    <input ng-model="isPrivate" type="checkbox" class="filled-in" id="filled-in-box" />
-                    <label for="filled-in-box">Private</label>
-
-  					<button class="btn-sm btn-warning" ng-click="logout()">Logout</button>
+                  <div class="input-field col s2">
+                  <label class="lite" for="roomId">Name</label>
                   </div>
-                  <div class="input-field col s4">
+                  <div class="input-field col s7">
+                     <input ng-model="newZoneName" type="text">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s2">
+                  <label class="lite" for="roomId">X</label>
+                  </div>
+                  <div class="input-field col s7">
+                     <input ng-model="newZoneX" type="number">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="input-field col s2">
+                  <label class="lite" for="roomId">Y</label>
+                  </div>
+                  <div class="input-field col s7">
+                     <input ng-model="newZoneY" type="number">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s2">
+                  <label class="lite" for="roomId">Width</label>
+                  </div>
+                  <div class="input-field col s7">
+                     <input ng-model="newZoneW" type="number">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s2">
+                  <label class="lite" for="roomId">Height</label>
+                  </div>
+                  <div class="input-field col s7">
+                     <input ng-model="newZoneH" type="number">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s2">
+                  <label class="lite" for="roomId">Capacity</label>
+                  </div>
+                  <div class="input-field col s7">
+                     <input ng-model="newZoneCap" type="number">
+                  </div>
+                  <div class="input-field col s3">
+                    <a ng-click="addZone()" type="button" id="startButton" class="btn btn-success">add</a>
                   </div>
                 </div>
               </form>
@@ -39,4 +148,3 @@
       </div>
     </div>
 </div>
-<footer></footer>

@@ -43,8 +43,13 @@ app.use(handleError);
   socket.emit('welcome', { message: 'Welcome!', id: socket.id });
 
   socket.on("updatezone", function(zone){
-    console.log("Zone updated: "+zone.id);
-    socket.broadcast.emit('adminsupdatezone', {zone:zone});
+    console.log("Zone updated: "+zone.id+", action: "+zone.action);
+    socket.broadcast.emit('updatezone', zone);
+  });
+
+  socket.on("zonecreated", function(zone){
+    console.log("Zone created: "+zone.id);
+    socket.broadcast.emit('newzone', zone);
   });
 
   var conn;
@@ -67,7 +72,7 @@ app.use(handleError);
 
 
 /*
- * Retrieve all todo items.
+ * Retrieve all zone items.
  */
 function listZoneItems(req, res, next) {
   r.table('zones').orderBy({index: 'createdAt'}).run(req.app._rdbConn, function(err, cursor) {
@@ -87,15 +92,15 @@ function listZoneItems(req, res, next) {
 }
 
 /*
- * Insert a new todo item.
+ * Insert a new zone item.
  */
 function createZoneItem(req, res, next) {
-  var todoItem = req.body;
-  todoItem.createdAt = r.now();
+  var zoneItem = req.body;
+  zoneItem.createdAt = r.now();
 
-  console.dir(todoItem);
+  console.dir(zoneItem);
 
-  r.table('zones').insert(todoItem, {returnChanges: true}).run(req.app._rdbConn, function(err, result) {
+  r.table('zones').insert(zoneItem, {returnChanges: true}).run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }
@@ -105,12 +110,12 @@ function createZoneItem(req, res, next) {
 }
 
 /*
- * Get a specific todo item.
+ * Get a specific zone item.
  */
 function getZoneItem(req, res, next) {
-  var todoItemID = req.params.id;
+  var zoneItemID = req.params.id;
 
-  r.table('zones').get(todoItemID).run(req.app._rdbConn, function(err, result) {
+  r.table('zones').get(zoneItemID).run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }
@@ -120,13 +125,13 @@ function getZoneItem(req, res, next) {
 }
 
 /*
- * Update a todo item.
+ * Update a zone item.
  */
 function updateZoneItem(req, res, next) {
-  var todoItem = req.body;
-  var todoItemID = req.params.id;
+  var zoneItem = req.body;
+  var zoneItemID = req.params.id;
 
-  r.table('zones').get(todoItemID).update(todoItem, {returnChanges: true}).run(req.app._rdbConn, function(err, result) {
+  r.table('zones').get(zoneItemID).update(zoneItem, {returnChanges: true}).run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }
@@ -136,12 +141,12 @@ function updateZoneItem(req, res, next) {
 }
 
 /*
- * Delete a todo item.
+ * Delete a zone item.
  */
 function deleteZoneItem(req, res, next) {
-  var todoItemID = req.params.id;
+  var zoneItemID = req.params.id;
 
-  r.table('zones').get(todoItemID).delete().run(req.app._rdbConn, function(err, result) {
+  r.table('zones').get(zoneItemID).delete().run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }

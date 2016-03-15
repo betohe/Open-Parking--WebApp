@@ -3,6 +3,19 @@ angular.module( 'sample.admin', [
 ])
 .controller( 'AdminCtrl', function AdminController( $scope, auth, $http, zoneStorage, $location, store, mySocket ) {
 
+  $scope.zones = [];
+
+  $scope.newZoneid = '';
+  $scope.newZoneName = '';
+  $scope.newZoneX = null;
+  $scope.newZoneY = null;
+  $scope.newZoneW = null;
+  $scope.newZoneH = null;
+
+  $scope.newZoneCap = null;
+  $scope.editedZone = null;
+
+
   if(auth.profile.roles.indexOf("admin") == -1){
         $location.path("/");
   }
@@ -40,10 +53,6 @@ angular.module( 'sample.admin', [
     $location.path('/login');
   }
 
-  // ToDos
-
-  $scope.zones = [];
-
   zoneStorage.get().success(function(zones) {
     $scope.zones = zones;
   }).error(function(error) {
@@ -51,28 +60,70 @@ angular.module( 'sample.admin', [
 
   });
 
-  $scope.newZone = '';
-  $scope.editedZone = null;
-
   $scope.$watch('zones', function (newValue, oldValue) {
+
     console.log($scope.zones)
   }, true);
 
+  $scope.drawCanvas= function(i) {
+      console.log("draw; "+i)
+      d3.select("#canvas"+$scope.zones[i].id).select("svg").remove();
+      var svgContainer = d3.select("#canvas"+$scope.zones[i].id).append("svg")
+                                      .attr("width", $scope.zones[i].w)
+                                      .attr("height", $scope.zones[i].h).append("rect")
+                              .attr("x", 5)
+                              .attr("y", 5)
+                              .attr("width", $scope.zones[i].w)
+                              .attr("height", $scope.zones[i].h)
+                              .attr('fill', colorPercentage($scope.zones[i].full/$scope.zones[i].capacity));
+                              console.log($scope.zones[i]);
+  }
+
+
+  function colorPercentage(val){
+                                if (val <= 0.25) { // 0.25 is a percentage value representing the data
+                                  return 'green';
+                                }
+                                else if (val <= 0.50) {
+                                  return 'yellow';
+                                }
+                                else if (val  <= 0.75) {
+                                  return 'orange';
+                                }
+                                else if (val <= 1) {
+                                  return 'red';
+                                }
+                              }
+
   $scope.addZone = function () {
-    var newTitle = $scope.newZone.trim();
-    if (!newTitle.length) {
-      return;
-    }
     var newZone = {
-      title: newTitle,
-      completed: false
+      "id": $scope.newZoneid.trim(),
+      "name": $scope.newZoneName.trim(),
+      "x": $scope.newZoneX,
+      "y": $scope.newZoneY,
+      "w": $scope.newZoneW,
+      "h": $scope.newZoneH,
+      "capacity": $scope.newZoneCap,
+      "full": 0
+    }
+    if (!$scope.newZoneid.trim().length || !$scope.newZoneName.trim().length || $scope.newZoneCap <= 0 || $scope.newZoneX < 0 || $scope.newZoneY < 0) {
+      alert("wrong input");
+      return;
     }
     zoneStorage.create(newZone).success(function(savedZone) {
       $scope.zones.push(savedZone);
+      mySocket.emit('zonecreated', savedZone); 
     }).error(function(error) {
-      alert('Failed to save the new TODO');
+      alert('Failed to save the new Zone');
     });
-    $scope.newZone = '';
+    $scope.newZone = {};
+    $scope.newZoneid = '';
+    $scope.newZoneName = '';
+    $scope.newZoneX = null;
+    $scope.newZoneY = null;
+    $scope.newZoneW = null;
+    $scope.newZoneH = null;
+    $scope.newZoneCap = null;
   };
 
   $scope.toggleZone = function (zone) {
@@ -88,10 +139,14 @@ angular.module( 'sample.admin', [
       }
     }).error(function() {
       console.log('fds');
-      alert('Failed to update the status of this TODO');
+      alert('Failed to update the status of this ZONE');
     });
 
   };
+
+  $scope.editZone = function (position){
+    console.log(position);
+  }
   $scope.editZone = function (zone) {
     $scope.editedZone = zone;
     // Clone the original zone to restore it on demand.

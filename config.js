@@ -7,5 +7,8 @@ module.exports = {
   },
   express: {
      port: 3000
+  },
+  socketio: {
+	port: 8091
   }
 };

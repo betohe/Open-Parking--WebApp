@@ -7,7 +7,12 @@ angular.module( 'sample.login', [
     auth.signin({}, function(profile, token) {
       store.set('profile', profile);
       store.set('token', token);
-      $location.path("/");
+      if(profile.roles.indexOf("admin") > -1){
+        $location.path("/admin");
+      }
+      else{
+        $location.path("/");
+      }
     }, function(error) {
       console.log("There was an error logging in", error);
     });

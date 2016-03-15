@@ -1,27 +1,30 @@
 var async = require('async');
 var express = require('express');
 var bodyParser = require('body-parser');
+var sockio = require("socket.io");
 var r = require('rethinkdb');
 
 var config = require(__dirname + '/config.js');
 
 var app = express();
 
+var io = sockio.listen(app.listen(config.socketio.port), {log: false});
+console.log("Server started on port " + config.socketio.port);
 
 //For serving the index.html and all the other front-end assets.
 app.use(express.static(__dirname + '/public'));
 
 app.use(bodyParser.json());
 
-//The REST routes for "todos".
-app.route('/todos')
-  .get(listTodoItems)
-  .post(createTodoItem);
+//The REST routes for "zones".
+app.route('/zones')
+  .get(listZoneItems)
+  .post(createZoneItem);
 
-app.route('/todos/:id')
-  .get(getTodoItem)
-  .put(updateTodoItem)
-  .delete(deleteTodoItem);
+app.route('/zones/:id')
+  .get(getZoneItem)
+  .put(updateZoneItem)
+  .delete(deleteZoneItem);
 
 //If we reach this middleware the route could not be handled and must be unknown.
 app.use(handle404);
@@ -31,15 +34,48 @@ app.use(handleError);
 
 
 /*
+ * Socket.io
+ */
+
+ io.sockets.on("connection", function(socket) {
+
+  console.log('a user connected');
+  socket.emit('welcome', { message: 'Welcome!', id: socket.id });
+
+  socket.on("updatezone", function(zone){
+    console.log("Zone updated: "+zone.id);
+    socket.broadcast.emit('adminsupdatezone', {zone:zone});
+  });
+
+  var conn;
+  r.connect(config.rethinkdb).then(function(c) {
+    conn = c;
+    return r.table('zones').orderBy({index: 'createdAt'})
+      .limit(60).run(conn);
+  })
+  .then(function(cursor) { return cursor.toArray(); })
+  .then(function(result) {
+    socket.emit("zones", result);
+  })
+  .error(function(err) { console.log("Failure:", err); })
+  .finally(function() {
+    if (conn)
+      conn.close();
+  });
+});
+
+
+
+/*
  * Retrieve all todo items.
  */
-function listTodoItems(req, res, next) {
-  r.table('todos').orderBy({index: 'createdAt'}).run(req.app._rdbConn, function(err, cursor) {
+function listZoneItems(req, res, next) {
+  r.table('zones').orderBy({index: 'createdAt'}).run(req.app._rdbConn, function(err, cursor) {
     if(err) {
       return next(err);
     }
 
-    //Retrieve all the todos in an array.
+    //Retrieve all the zones in an array.
     cursor.toArray(function(err, result) {
       if(err) {
         return next(err);
@@ -53,13 +89,13 @@ function listTodoItems(req, res, next) {
 /*
  * Insert a new todo item.
  */
-function createTodoItem(req, res, next) {
+function createZoneItem(req, res, next) {
   var todoItem = req.body;
   todoItem.createdAt = r.now();
 
   console.dir(todoItem);
 
-  r.table('todos').insert(todoItem, {returnChanges: true}).run(req.app._rdbConn, function(err, result) {
+  r.table('zones').insert(todoItem, {returnChanges: true}).run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }
@@ -71,10 +107,10 @@ function createTodoItem(req, res, next) {
 /*
  * Get a specific todo item.
  */
-function getTodoItem(req, res, next) {
+function getZoneItem(req, res, next) {
   var todoItemID = req.params.id;
 
-  r.table('todos').get(todoItemID).run(req.app._rdbConn, function(err, result) {
+  r.table('zones').get(todoItemID).run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }
@@ -86,11 +122,11 @@ function getTodoItem(req, res, next) {
 /*
  * Update a todo item.
  */
-function updateTodoItem(req, res, next) {
+function updateZoneItem(req, res, next) {
   var todoItem = req.body;
   var todoItemID = req.params.id;
 
-  r.table('todos').get(todoItemID).update(todoItem, {returnChanges: true}).run(req.app._rdbConn, function(err, result) {
+  r.table('zones').get(todoItemID).update(todoItem, {returnChanges: true}).run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }
@@ -102,10 +138,10 @@ function updateTodoItem(req, res, next) {
 /*
  * Delete a todo item.
  */
-function deleteTodoItem(req, res, next) {
+function deleteZoneItem(req, res, next) {
   var todoItemID = req.params.id;
 
-  r.table('todos').get(todoItemID).delete().run(req.app._rdbConn, function(err, result) {
+  r.table('zones').get(todoItemID).delete().run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }
@@ -161,11 +197,11 @@ async.waterfall([
   },
   function createTable(connection, callback) {
     //Create the table if needed.
-    r.tableList().contains('todos').do(function(containsTable) {
+    r.tableList().contains('zones').do(function(containsTable) {
       return r.branch(
         containsTable,
         {created: 0},
-        r.tableCreate('todos')
+        r.tableCreate('zones')
       );
     }).run(connection, function(err) {
       callback(err, connection);
@@ -173,11 +209,11 @@ async.waterfall([
   },
   function createIndex(connection, callback) {
     //Create the index if needed.
-    r.table('todos').indexList().contains('createdAt').do(function(hasIndex) {
+    r.table('zones').indexList().contains('createdAt').do(function(hasIndex) {
       return r.branch(
         hasIndex,
         {created: 0},
-        r.table('todos').indexCreate('createdAt')
+        r.table('zones').indexCreate('createdAt')
       );
     }).run(connection, function(err) {
       callback(err, connection);
@@ -185,7 +221,7 @@ async.waterfall([
   },
   function waitForIndex(connection, callback) {
     //Wait for the index to be ready.
-    r.table('todos').indexWait('createdAt').run(connection, function(err, result) {
+    r.table('zones').indexWait('createdAt').run(connection, function(err, result) {
       callback(err, connection);
     });
   }

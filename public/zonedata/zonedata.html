@@ -1,0 +1,40 @@
+<navbar></navbar>
+<div class="home">
+	<div class="container">
+          <div class="row">
+            <div class="container">
+
+              <div class="row center">
+
+ 				<h1 id="logo"><img src="/home/auth0_logo_final_blue_RGB.png" /></h1>
+  				<h2>Welcome Admin {{auth.profile.nickname}}</h2>
+  				<img src="{{auth.profile.picture}}" />
+              </div>
+              <form class="col s12" >
+                <div class="row">
+                  <div class="input-field col s8">
+  					<input ng-model="newTodo" type="text">
+                    <label class="lite" for="roomId">new Zone</label>
+                  </div>
+                  <div class="input-field col s4">
+                    <a ng-click="addTodo()" type="button" id="startButton" class="btn btn-success">add</a>
+                    <a ng-click="callApi()" type="button" id="startButton" class="btn btn-success">callApi</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s8">
+                    <input ng-model="isPrivate" type="checkbox" class="filled-in" id="filled-in-box" />
+                    <label for="filled-in-box">Private</label>
+
+  					<button class="btn-sm btn-warning" ng-click="logout()">Logout</button>
+                  </div>
+                  <div class="input-field col s4">
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+      </div>
+    </div>
+</div>
+<footer></footer>

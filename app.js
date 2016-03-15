@@ -8,7 +8,8 @@ var config = require(__dirname + '/config.js');
 
 var app = express();
 
-var io = sockio.listen(app.listen(config.socketio.port), {log: false});
+var io = sockio.listen(process.env.PORT || app.listen(config.socketio.port), {log: false});
+
 console.log("Server started on port " + config.socketio.port);
 
 //For serving the index.html and all the other front-end assets.

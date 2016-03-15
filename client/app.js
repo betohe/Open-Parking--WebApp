@@ -103,7 +103,7 @@ angular.module( 'sample', [
 })
 .factory('mySocket', function (socketFactory) {
   return socketFactory({
-        ioSocket: io('http://10.43.36.225:8091')
+        ioSocket: io('http://secure-badlands-53433.herokuapp.com/:8091')
     });
 }).directive('ghVisualization', function () {
 

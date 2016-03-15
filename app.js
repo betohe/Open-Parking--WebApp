@@ -1,5 +1,4 @@
 var async = require('async');
-var http = require('http');
 var express = require('express');
 var bodyParser = require('body-parser');
 var sockio = require("socket.io");
@@ -7,8 +6,9 @@ var r = require('rethinkdb');
 
 var config = require(__dirname + '/config.js');
 
-var app = express.createServer();
-var io = sockio(app);
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
 console.log("Server started on port " + config.socketio.port);
 

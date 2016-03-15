@@ -8,7 +8,7 @@ var config = require(__dirname + '/config.js');
 
 var app = express();
 
-var io = sockio.listen(process.env.PORT || app.listen(config.socketio.port), {log: false});
+var io = sockio.listen(app.listen(config.socketio.port), {log: false});
 
 console.log("Server started on port " + config.socketio.port);
 
@@ -236,7 +236,7 @@ function handleError(err, req, res, next) {
  */
 function startExpress(connection) {
   app._rdbConn = connection;
-  app.listen(config.express.port);
+  app.listen(process.env.PORT || config.express.port);
   console.log('Listening on port ' + config.express.port);
 }
 

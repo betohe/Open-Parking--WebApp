@@ -27,6 +27,12 @@ app.route('/zones/:id')
   .put(updateZoneItem)
   .delete(deleteZoneItem);
 
+app.route('/enterzone/:id')
+  .put(enterZoneItem);
+
+app.route('/leavezone/:id')
+  .put(leaveZoneItem);
+
 //If we reach this middleware the route could not be handled and must be unknown.
 app.use(handle404);
 
@@ -138,6 +144,59 @@ function updateZoneItem(req, res, next) {
     }
 
     res.json(result.changes[0].new_val);
+  });
+}
+
+/*
+ * Zone Item take place
+ */
+
+ function enterZoneItem(req, res, next) {
+  var zoneItemID = req.params.id;
+
+  r.table('zones').get(zoneItemID).run(req.app._rdbConn, function(err, result) {
+    if(err) {
+      return next(err);
+    }
+
+    result.full++;
+
+    io.sockets.emit('updatezone', {id:zoneItemID, action: "enter" });
+
+    r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
+      if(err) {
+        return next(err);
+      }
+
+      res.json(result2);
+    });
+  });
+}
+
+
+ /*
+ * Free place
+ */
+
+ function leaveZoneItem(req, res, next) {
+  var zoneItemID = req.params.id;
+
+  r.table('zones').get(zoneItemID).run(req.app._rdbConn, function(err, result) {
+    if(err) {
+      return next(err);
+    }
+
+    result.full--;
+
+    io.sockets.emit('updatezone', {id:zoneItemID, action: "leave" });
+
+    r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
+      if(err) {
+        return next(err);
+      }
+
+      res.json(result2);
+    });
   });
 }
 

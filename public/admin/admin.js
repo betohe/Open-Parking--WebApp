@@ -15,9 +15,14 @@ angular.module( 'sample.admin', [
   $scope.newZoneCap = null;
   $scope.editedZone = null;
 
+  if(auth.profile == undefined){
 
-  if(auth.profile.roles.indexOf("admin") == -1){
-        $location.path("/");
+    $location.path('/login');
+  }
+  else{
+    if(auth.profile.roles.indexOf("admin") == -1){
+          $location.path("/");
+    }
   }
   mySocket.on('zones', function (item) {
     console.log(item);

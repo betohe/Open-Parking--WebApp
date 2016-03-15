@@ -4,6 +4,7 @@ angular.module( 'sample.home', [
 .controller( 'HomeCtrl', function HomeController( $scope, auth, $http, zoneStorage, $location, store, mySocket  ) {
 
   $scope.zones = [];
+
   $scope.updateZone = function(pos) {
     mySocket.emit('updatezone', $scope.zones[pos]); //op: enter or leave
   }

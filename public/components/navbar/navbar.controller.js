@@ -1,6 +1,9 @@
 angular.module('sample')
   .controller('NavbarController', function NavbarController($scope, $location, auth, store) {
 
+
+
+    if(auth.profile != undefined){
     $scope.$location = $location;
     $scope.isAdmin = auth.profile.roles.indexOf("admin") > -1;
     $scope.isLoggedIn = auth.isAuthenticated;
@@ -13,5 +16,6 @@ angular.module('sample')
       store.remove('token');
       $location.path('/login');
     }
+  }
 });
 

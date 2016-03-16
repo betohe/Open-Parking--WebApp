@@ -15,8 +15,6 @@ angular.module( 'sample.admin', [
   $scope.newZoneCap = null;
   $scope.editedZone = null;
 
-  $scope.activeZoneEdit = ID
-
 
 var host = location.origin.replace(/^http/, 'ws');
 //console.log(host);
@@ -169,7 +167,7 @@ $scope.connection= new WebSocket(host);
   };
 
   $scope.activeZone = function (id){
-    console.log(position);
+    console.log(id);
   }
 
   $scope.editZone = function (zone) {

@@ -1,14 +1,16 @@
 var async = require('async');
 var express = require('express');
+var http = require('http');
 var bodyParser = require('body-parser');
 var sockio = require("socket.io");
 var r = require('rethinkdb');
 
 var config = require(__dirname + '/config.js');
 
-var app = require('express')();
+var app = require('express');
+var http = http.Server(app);
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')(http);
 server.listen(config.socketio.port);
 console.log("Server started on port " + config.socketio.port);
 
@@ -237,6 +239,9 @@ function handleError(err, req, res, next) {
 function startExpress(connection) {
   app._rdbConn = connection;
   app.listen(process.env.PORT || config.express.port);
+  http.listen(config.port, function () {
+    console.log('Express server listening on port %d in %s mode', config.port, app.get('env'));
+});
   console.log('Listening on port ' + config.express.port);
 }
 

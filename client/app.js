@@ -103,7 +103,7 @@ angular.module( 'sample', [
 })
 .factory('mySocket', function (socketFactory) {
   return socketFactory({
-        ioSocket: io.connect('http://secure-badlands-53433.herokuapp.com/')
+        ioSocket: io.connect('http://localhost')
     });
 }).directive('ghVisualization', function () {
 

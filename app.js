@@ -9,10 +9,6 @@ var config = require(__dirname + '/config.js');
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-io.configure(function () { 
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
-});
 server.listen(config.socketio.port);
 console.log("Server started on port " + config.socketio.port);
 

@@ -9,6 +9,6 @@ module.exports = {
      port: 3000
   },
   socketio: {
-	port: 80
+	port: 8091
   }
 };

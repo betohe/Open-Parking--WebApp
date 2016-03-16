@@ -7,8 +7,7 @@ var r = require('rethinkdb');
 var config = require(__dirname + '/config.js');
 
 var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')(app);
 server.listen(config.socketio.port);
 console.log("Server started on port " + config.socketio.port);
 

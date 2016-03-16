@@ -19,13 +19,13 @@ console.log("Server started on port " + config.socketio.port);
 //For serving the index.html and all the other front-end assets.
 app.use(express.static(__dirname + '/client'));
 
-var server = http.createServer(app)
-server.listen(process.env.PORT || config.express.port))
+var server = http.createServer(app);
+server.listen(process.env.PORT || config.express.port);
 
-console.log("http server listening on %d", process.env.PORT || config.express.port))
+console.log("http server listening on %d", process.env.PORT || config.express.port));
 
-var wss = new WebSocketServer({server: server})
-console.log("websocket server created")
+var wss = new WebSocketServer({server: server});
+console.log("websocket server created");
 
 app.use(bodyParser.json());
 
@@ -56,7 +56,7 @@ app.use(handleError);
  * Socket.io
  */
 
- io.sockets.on("connection", function(socket) {
+wss.on("connection", function(socket) {
 
   console.log('a user connected');
   socket.emit('welcome', { message: 'Welcome!', id: socket.id });

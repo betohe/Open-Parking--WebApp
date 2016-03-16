@@ -103,7 +103,7 @@ angular.module( 'sample', [
 })
 .factory('mySocket', function (socketFactory) {
   return socketFactory({
-        ioSocket: io.connect({path:'/CAH/socket.io'})
+        ioSocket: io.connect({path:'/socket.io'})
     });
 }).directive('ghVisualization', function () {
 

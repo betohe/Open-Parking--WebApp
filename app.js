@@ -1,5 +1,6 @@
 var async = require('async');
 var express = require('express');
+var http = require('http');
 var bodyParser = require('body-parser');
 var sockio = require("socket.io");
 var r = require('rethinkdb');

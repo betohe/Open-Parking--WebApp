@@ -1,12 +1,12 @@
 {
   "name": "OpenParking",
   "version": "0.0.2",
-  "private": false, 
+  "private": false,
   "description": "This example is so cool.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"start": "node app.js"
+    "start": "node app.js"
   },
   "keywords": [
     "example",
@@ -15,6 +15,7 @@
   "author": "OpenParking",
   "license": "GPLV2",
   "dependencies": {
+    "angular-socket-io": "^0.7.0",
     "async": "0.9.0",
     "body-parser": "1.12.3",
     "express": "4.12.3",

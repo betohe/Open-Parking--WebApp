@@ -1,6 +1,8 @@
 var async = require('async');
 var express = require('express');
 var http = require('http');
+var WebSocketServer = require("ws").Server
+
 var bodyParser = require('body-parser');
 var sockio = require("socket.io");
 var r = require('rethinkdb');
@@ -8,7 +10,6 @@ var r = require('rethinkdb');
 var config = require(__dirname + '/config.js');
 
 var app = require('express')();
-var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 io.set('transports', ['xhr-polling']);
 io.set('polling duration', 10); 
@@ -17,6 +18,14 @@ console.log("Server started on port " + config.socketio.port);
 
 //For serving the index.html and all the other front-end assets.
 app.use(express.static(__dirname + '/client'));
+
+var server = http.createServer(app)
+server.listen(process.env.PORT || config.express.port))
+
+console.log("http server listening on %d", process.env.PORT || config.express.port))
+
+var wss = new WebSocketServer({server: server})
+console.log("websocket server created")
 
 app.use(bodyParser.json());
 

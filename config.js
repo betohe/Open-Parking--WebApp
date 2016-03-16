@@ -6,7 +6,7 @@ module.exports = {
     db: 'rethinkdb_ex'
   },
   express: {
-     port: 3000
+     port: 80
   },
   socketio: {
 	port: 8091

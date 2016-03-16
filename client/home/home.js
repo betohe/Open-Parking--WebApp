@@ -162,6 +162,7 @@ $scope.connection.onmessage = function (message) {
                         .attr("y", function (d) { return d.y; })
                         .attr("width", function (d) { return d.w; })
                         .attr("height", function (d) { return d.h; })
+                        .attr("opacity", 0.5)
                         .attr('fill', function(d) {
                                 if (d.full/d.capacity <= 0.25) { // 0.25 is a percentage value representing the data
                                   return 'green';
@@ -176,6 +177,7 @@ $scope.connection.onmessage = function (message) {
                                   return 'red';
                                 }
                               });
+
     console.log($scope.zones);
   }
 

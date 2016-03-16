@@ -14,6 +14,7 @@ angular.module( 'sample.admin', [
 
   $scope.newZoneCap = null;
   $scope.editedZone = null;
+  $scope.saving = false;
 
 
 var host = location.origin.replace(/^http/, 'ws');
@@ -81,11 +82,11 @@ $scope.connection= new WebSocket(host);
 
   $scope.$watch('zones', function (newValue, oldValue) {
 
-    console.log($scope.zones)
+    //console.log($scope.zones)
   }, true);
 
   $scope.drawCanvas= function(i) {
-      console.log("draw; "+i)
+      //console.log("draw; "+i)
       d3.select("#canvas"+$scope.zones[i].id).select("svg").remove();
       var svgContainer = d3.select("#canvas"+$scope.zones[i].id).append("svg")
                                       .attr("width", $scope.zones[i].w)
@@ -95,7 +96,17 @@ $scope.connection= new WebSocket(host);
                               .attr("width", $scope.zones[i].w)
                               .attr("height", $scope.zones[i].h)
                               .attr('fill', colorPercentage($scope.zones[i].full/$scope.zones[i].capacity));
-                              console.log($scope.zones[i]);
+
+      d3.select("#edcanvas"+$scope.zones[i].id).select("svg").remove();
+      edsvgContainer = d3.select("#edcanvas"+$scope.zones[i].id).append("svg")
+                                      .attr("width", $scope.zones[i].w)
+                                      .attr("height", $scope.zones[i].h).append("rect")
+                              .attr("x", 5)
+                              .attr("y", 5)
+                              .attr("width", $scope.zones[i].w)
+                              .attr("height", $scope.zones[i].h)
+                              .attr('fill', colorPercentage($scope.zones[i].full/$scope.zones[i].capacity));
+                              //console.log($scope.zones[i]);
   }
 
 
@@ -170,33 +181,70 @@ $scope.connection= new WebSocket(host);
     console.log(id);
   }
 
-  $scope.editZone = function (zone) {
-    $scope.editedZone = zone;
+  $scope.cancelEditZone = function (i) {
+    $scope.editedZone =  null;
     // Clone the original zone to restore it on demand.
-    $scope.originalZone = angular.extend({}, zone);
+    $scope.originalZone = null;
   };
 
-  $scope.doneEditing = function (zone, $event) {
-    zone.title = zone.title.trim();
-    if ((zone._saving !== true) && ($scope.originalZone.title !== zone.title)) {
-      zone._saving = true; // submit and blur trigger this method. Let's save the document just once
-      zoneStorage.update(zone).success(function(newZone) {
+  $scope.editZone = function (i) {
+    $scope.editedZone =  $scope.zones[i];
+    // Clone the original zone to restore it on demand.
+    $scope.originalZone = angular.extend({}, $scope.zones[i]);
+  };
+
+  $scope.doneEditing = function (i) {
+    if($scope.editedZone.id !== $scope.originalZone.id){
+      console.log("different!");
+      zoneStorage.delete($scope.originalZone.id).success(function() {
+        console.log("deleted");
+        $scope.originalZone  = null;
+      }).error(function() {
+        alert('Failed to delete this Zone');
+      });
+
+      zoneStorage.create($scope.editedZone).success(function(savedZone) {
+        $scope.zones[i] = savedZone;
+        $scope.editedZone = null;
+      }).error(function(error) {
+        alert('Failed to save the new Zone');
+      });
+      return;
+    }
+    if (($scope.saving !== true) && ($scope.editedZone !== $scope.originalZone)) {
+      $scope.saving = true; // submit and blur trigger this method. Let's save the document just once
+      zoneStorage.update($scope.editedZone).success(function(newZone) {
         if (newZone === 'null') { // Compare with a string because of https://github.com/angular/angular.js/issues/2973
           console.log('hum');
           $scope.zones.splice($scope.zones.indexOf(zone), 1);
         }
         else {
-          $scope.zones[$scope.zones.indexOf(zone)] = newZone;
+          console.log("successfully updated");
+          $scope.zones[i] = newZone;
           $scope.editedZone = null;
         }
       }).error(function() {
-        zone._saving = false;
-        alert('Failed to update this TODO');
+        $scope.saving = false;
+        alert('Failed to update this Zone');
       });
     }
     else {
       $scope.editedZone = null;
     }
+    /*
+    zoneStorage.create($scope.editedZone).success(function(savedZone) {
+      $scope.zones[i] = savedZone;
+      $scope.editedZone = null;
+
+
+      zoneStorage.delete($scope.originalZone).success(function() {
+        $scope.originalZone = null
+      }).error(function() {
+        alert('Failed to update this Zone');
+      });
+    }).error(function(error) {
+      alert('Failed to save the new Zone');
+    });*/
   };
 
   $scope.revertEditing = function (zone) {
@@ -204,9 +252,10 @@ $scope.connection= new WebSocket(host);
     $scope.doneEditing($scope.originalZone);
   };
 
-  $scope.removeZone = function (zone) {
-    zoneStorage.delete(zone.id).success(function() {
-      $scope.zones.splice($scope.zones.indexOf(zone), 1);
+  $scope.removeZone = function (i) {
+
+    zoneStorage.delete($scope.zones[i].id).success(function() {
+      $scope.zones.splice(i, 1);
     }).error(function() {
       alert('Failed to delete this TODO');
     });

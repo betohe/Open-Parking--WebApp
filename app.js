@@ -220,7 +220,7 @@ function sendTo(socket, message) {
  * Retrieve all zone items.
  */
 function listZoneItems(req, res, next) {
-  r.table('zones').orderBy({index: 'createdAt'}).run(req.app._rdbConn, function(err, cursor) {
+  r.table('zones').orderBy({index: 'id'}).run(req.app._rdbConn, function(err, cursor) {
     if(err) {
       return next(err);
     }

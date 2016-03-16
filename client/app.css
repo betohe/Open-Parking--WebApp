@@ -1,3 +1,7 @@
 .brand-logo > img{
 	max-width: 200px;
 }
+
+.btn .red{
+	background: red;
+}

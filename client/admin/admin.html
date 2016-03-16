@@ -8,14 +8,13 @@
           				<img src="{{auth.profile.picture}}" />
                   <!--display only -->
                   <div class="card padding" ng-repeat="zone in zones | filter:statusFilter track by $index">
-                  <div class="card padding" ng-show="todo == editedTodo"> 
+                  <div class="card padding" ng-hide="zone == editedZone"> 
                     <div class="row">
                       <div class="input-field col s2">
                          <h6 class="lite" for="roomId">{{zone.name}}</h6>
                       </div>
                       <div class="input-field col s2">
                          <div id="canvas{{zone.id}}"></div>
-                         <p ng-repeat="subCategory in drawCanvas($index)"></p>
                       </div>
                     </div>
                     <div class="row">
@@ -58,7 +57,7 @@
                          <p class="lite" for="roomId">Height</p>
                       </div>
                       <div class="input-field col s2">
-                          <p>{{zone.id}}</p>
+                          <p>{{zone.h}}</p>
 
                       </div>
                       <div class="input-field col s1">
@@ -83,6 +82,7 @@
                          <h6 class="lite" for="roomId">{{zone.name}}</h6>
                       </div>
                       <div class="input-field col s2">
+                         <div id="edcanvas{{zone.id}}"></div>
                          <p ng-repeat="subCategory in drawCanvas($index)"></p>
                       </div>
                     </div>
@@ -91,26 +91,26 @@
                          <label class="lite" for="roomId">ID</label>
                       </div>
                       <div class="input-field col s1">
-                          <input ng-model="zone.id" type="text" disabled>
+                          <input ng-model="zone.id" type="text">
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">Nombre</label>
                       </div>
                       <div class="input-field col s3">
-                          <input ng-model="zone.name" type="text" disabled>
+                          <input ng-model="zone.name" type="text">
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">X</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.x" type="number" disabled>
+                          <input ng-model="zone.x" type="number">
 
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">Y</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.y" type="number" disabled>
+                          <input ng-model="zone.y" type="number">
 
                       </div>
                     </div>
@@ -119,21 +119,21 @@
                          <label class="lite" for="roomId">Width</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.w" type="number" disabled>
+                          <input ng-model="zone.w" type="number">
 
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">Height</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.h" type="number" disabled>
+                          <input ng-model="zone.h" type="number">
 
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">Capacity</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.capacity" type="text" ng-disabled="activeZone({{zone.id}})">
+                          <input ng-model="zone.capacity" type="text">
 
                       </div>
                        <div class="input-field col s1">
@@ -146,11 +146,14 @@
                   </div>
                   <div class="row">
                     <div class="input-field col s3">
-                        <a ng-click="editZone($index)" class="btn">Edit</a>
-                        <a ng-click="updateZone($index)" class="btn hide">Update</a>
+                        <a ng-click="editZone($index)" class="btn" ng-hide="zone == editedZone">Edit</a>
+                        <a ng-click="doneEditing($index)" class="btn" ng-show="zone == editedZone">Update</a>
                     </div>
                     <div class="input-field col s3">
-                        <a ng-click="updateZone($index)" class="btn hide">Cancel</a>
+                        <a ng-click="removeZone($index)" class="btn red" ng-show="zone == editedZone">Delete</a>
+                    </div>
+                    <div class="input-field col s3">
+                        <a ng-click="cancelEditZone($index)" class="btn" ng-show="zone == editedZone">Cancel</a>
                     </div>
                   </div>
                 </div>

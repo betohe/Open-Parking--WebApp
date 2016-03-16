@@ -6,7 +6,8 @@
               <div class="row center">
           				<h2>Welcome Admin {{auth.profile.nickname}}</h2>
           				<img src="{{auth.profile.picture}}" />
-                  <div class="card padding" ng-repeat="zone in zones">
+                  <!--display only -->
+                  <div class="card padding" ng-repeat="zone in zones | filter:statusFilter track by $index" ng-show="todo == editedTodo">
                     <div class="row">
                       <div class="input-field col s2">
                          <h6 class="lite" for="roomId">{{zone.name}}</h6>
@@ -21,25 +22,27 @@
                          <label class="lite" for="roomId">ID</label>
                       </div>
                       <div class="input-field col s1">
-                          <input ng-model="zone.id" id="newzoneid" type="text">
+                          <input ng-model="zone.id" id="zoneid{{zone.id}}" type="text" disabled>
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">Nombre</label>
                       </div>
                       <div class="input-field col s3">
-                          <input ng-model="zone.name" id="newzoneid" type="text">
+                          <input ng-model="zone.name" id="zonename{{zone.id}}" type="text" disabled>
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">X</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.x" id="newzoneid" type="number">
+                          <input ng-model="zone.x" id="zonex{{zone.id}}" type="number" disabled>
+
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">Y</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.y" id="newzoneid" type="number">
+                          <input ng-model="zone.y" id="zoney{{zone.id}}" type="number" disabled>
+
                       </div>
                     </div>
                     <div class="row">
@@ -47,19 +50,22 @@
                          <label class="lite" for="roomId">Width</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.w" id="newzoneid" type="number">
+                          <input ng-model="zone.w" id="zonew{{zone.id}}" type="number" disabled>
+
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">Height</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.h" id="newzoneid" type="number">
+                          <input ng-model="zone.h" id="zoneh{{zone.id}}" type="number" disabled>
+
                       </div>
                       <div class="input-field col s1">
                          <label class="lite" for="roomId">Capacity</label>
                       </div>
                       <div class="input-field col s2">
-                          <input ng-model="zone.capacity" id="newzoneid" type="text">
+                          <input ng-model="zone.capacity" id="zonecap{{zone.id}}" type="text" ng-disabled="activeZone({{zone.id}})">
+
                       </div>
                        <div class="input-field col s1">
                          <label class="lite" for="roomId">Taken</label>
@@ -70,10 +76,89 @@
                     </div>
                     <div class="row">
                       <div class="input-field col s3">
-                          <a ng-click="updateZone($index)" class="btn">Update</a>
+                          <a ng-click="editZone($index)" class="btn">Edit</a>
+                          <a ng-click="updateZone($index)" class="btn hide">Update</a>
                       </div>
                       <div class="input-field col s3">
-                          <a ng-click="updateZone($index)" class="btn">Cancel</a>
+                          <a ng-click="updateZone($index)" class="btn hide">Cancel</a>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- edited -->
+                  <div class="card padding" ng-repeat="zone in zones track by $index" ng-show="zone == editedZone">
+                    <div class="row">
+                      <div class="input-field col s2">
+                         <h6 class="lite" for="roomId">{{zone.name}}</h6>
+                      </div>
+                      <div class="input-field col s2">
+                         <div id="canvas{{zone.id}}"></div>
+                         <p ng-repeat="subCategory in drawCanvas($index)">{{ subCategory.name }}</p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">ID</label>
+                      </div>
+                      <div class="input-field col s1">
+                          <input ng-model="zone.id" type="text" disabled>
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Nombre</label>
+                      </div>
+                      <div class="input-field col s3">
+                          <input ng-model="zone.name" type="text" disabled>
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">X</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.x" type="number" disabled>
+
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Y</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.y" type="number" disabled>
+
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Width</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.w" type="number" disabled>
+
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Height</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.h" type="number" disabled>
+
+                      </div>
+                      <div class="input-field col s1">
+                         <label class="lite" for="roomId">Capacity</label>
+                      </div>
+                      <div class="input-field col s2">
+                          <input ng-model="zone.capacity" type="text" ng-disabled="activeZone({{zone.id}})">
+
+                      </div>
+                       <div class="input-field col s1">
+                         <label class="lite" for="roomId">Taken</label>
+                      </div>
+                      <div class="input-field col s1">
+                          <p>{{ zone.full }}</p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s3">
+                          <a ng-click="editZone($index)" class="btn">Edit</a>
+                          <a ng-click="updateZone($index)" class="btn hide">Update</a>
+                      </div>
+                      <div class="input-field col s3">
+                          <a ng-click="updateZone($index)" class="btn hide">Cancel</a>
                       </div>
                     </div>
                   </div>

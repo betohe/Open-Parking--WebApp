@@ -1,6 +1,6 @@
 module.exports = {
   rethinkdb: {
-    host: 'rethinkdb-openparking.cloudapp.net',
+    host: 'localhost',
     port: 28015,
     authKey: '',
     db: 'rethinkdb_ex'

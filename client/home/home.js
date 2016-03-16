@@ -1,23 +1,62 @@
 angular.module( 'sample.home', [
 'auth0'
 ])
-.controller( 'HomeCtrl', function HomeController( $scope, auth, $http, zoneStorage, $location, store, socket  ) {
+.controller( 'HomeCtrl', function HomeController( $scope, auth, $http, zoneStorage, $location, zoneStorage, socket  ) {
 
   $scope.zones = [];
 
 var host = location.origin.replace(/^http/, 'ws');
-console.log(host);
+//console.log(host);
+
 $scope.connection= new WebSocket(host);
 
+
+$scope.connection.onopen = function () { 
+  console.log(auth);
+      send({ 
+             type: "login", 
+             id:  auth.profile.email+makeid()
+          }); 
+};
+
+// Alias for sending messages in JSON format 
+    function send(message) { 
+      console.log("send to server"+ message);
+      console.log($scope.myConnection);
+       if ($scope.connectedUser) { 
+          message.name = $scope.connectedUser; 
+       } 
+      
+       $scope.connection.send(JSON.stringify(message)); 
+    };
+
+    function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 $scope.connection.onmessage = function (message) { 
-  
+
        console.log("Scope Got message", message.data);
+
        if(IsJsonString(message.data)){
            var data = JSON.parse(message.data); 
           
            switch(data.type) { 
+              case "login": 
+                 $scope.onLogin(data.success); 
+                 break; 
               case "newzone": 
+                  console.log("got!!");
+                  console.log(data.zone);
                   $scope.zones.push(data.zone);
+                   plot();
                  break; 
               case "updatezone": 
               console.log("Zone updated: "+data.id+", action: "+data.action);
@@ -29,6 +68,7 @@ $scope.connection.onmessage = function (message) {
                       else if (data.action === "leave"){
                         $scope.zones[i].full--;
                       }
+                      plot();
                     }
                   }
                  break; 
@@ -46,7 +86,6 @@ $scope.connection.onmessage = function (message) {
           console.log("not a json");
         } 
     };
-
   $scope.updateZone = function(pos) {
     socket.emit('updatezone', $scope.zones[pos]); //op: enter or leave
   }
@@ -83,7 +122,20 @@ $scope.connection.onmessage = function (message) {
 
   });
 
+  $scope.onLogin = function(success) { 
+
+       if (success === false) { 
+          alert("oops...try a different username"); 
+       } else { 
+          console.log("user logged in");
+       } 
+    };
+
   $scope.$watch('zones', function (newValue, oldValue) {
+    plot();
+  }, true);
+
+  function plot(){
 
                     d3.select("#chart").select("svg").remove();
                     var svgContainer = d3.select("#chart").append("svg")
@@ -125,7 +177,17 @@ $scope.connection.onmessage = function (message) {
                                 }
                               });
     console.log($scope.zones);
-  }, true);
+  }
+
+
+    function IsJsonString(str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
 
 
 });

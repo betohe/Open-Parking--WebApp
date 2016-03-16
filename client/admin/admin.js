@@ -1,7 +1,7 @@
 angular.module( 'sample.admin', [
 'auth0'
 ])
-.controller( 'AdminCtrl', function AdminController( $scope, auth, $http, zoneStorage, $location, store, mySocket ) {
+.controller( 'AdminCtrl', function AdminController( $scope, auth, $http, zoneStorage, $location, store, mySocket, socket ) {
 
   $scope.zones = [];
 
@@ -14,6 +14,20 @@ angular.module( 'sample.admin', [
 
   $scope.newZoneCap = null;
   $scope.editedZone = null;
+
+
+var host = location.origin.replace(/^http/, 'ws');
+//console.log(host);
+
+$scope.connection= new WebSocket(host);
+
+  $scope.connection.onopen = function () { 
+  console.log(auth.profile.clientID);
+      send({ 
+             type: "login", 
+             id:  auth.profile.clientID
+          }); 
+};
 
   if(auth.profile == undefined){
 
@@ -117,7 +131,10 @@ angular.module( 'sample.admin', [
     }
     zoneStorage.create(newZone).success(function(savedZone) {
       $scope.zones.push(savedZone);
-      mySocket.emit('zonecreated', savedZone); 
+      send({ 
+             type: "zonecreated", 
+             savedZone:  savedZone
+          }); 
     }).error(function(error) {
       alert('Failed to save the new Zone');
     });
@@ -210,5 +227,17 @@ angular.module( 'sample.admin', [
       //zone.completed = !completed;
     });
   };
+
+
+// Alias for sending messages in JSON format 
+    function send(message) { 
+      console.log("send to server"+ message);
+      console.log($scope.myConnection);
+       if ($scope.connectedUser) { 
+          message.name = $scope.connectedUser; 
+       } 
+      
+       $scope.connection.send(JSON.stringify(message)); 
+    };
 
 });

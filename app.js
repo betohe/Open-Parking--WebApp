@@ -49,6 +49,9 @@ app.use(handle404);
 //Generic error handling middleware.
 app.use(handleError);
 
+//all connected to the server users
+var users = {};
+var usersIDs = [];
 
 /*
  * Socket.io
@@ -71,6 +74,126 @@ wss.on("connection", function(socket) {
     socket.broadcast.emit('newzone', zone);
   });
 
+ //when server gets a message from a connected user 
+  socket.on('message', function(message) { 
+       var data; 
+        
+        console.log(data);
+       //accepting only JSON messages 
+       try { 
+          data = JSON.parse(message); 
+       } catch (e) { 
+          console.log("Invalid JSON"); 
+          data = {}; 
+       } 
+  //switching type of the user message 
+       switch (data.type) { 
+          //when a user tries to login 
+          case "login": 
+             console.log("User logged:", data.id); 
+          
+             //if anyone is logged in with this username then refuse 
+             if(users[data.id]) { 
+                sendTo(socket, { 
+                   type: "login", 
+                   success: false 
+                }); 
+             } else { 
+                //save user socket on the server 
+                users[data.id] = socket; 
+                usersIDs.push(data.id);
+                socket.id = data.id; 
+            
+                sendTo(socket, { 
+                   type: "login", 
+                   success: true 
+                });
+            
+             } 
+          
+             break;
+          case "zonecreated": 
+             //for ex. UserA wants to call UserB 
+             //console.log("Zone created: "+data.savedZone.id);
+             //console.log("Sending offer to: ", data.name); 
+            
+             //if UserB exists then send him offer details 
+             for (var i = 0; i < usersIDs.length; i++){
+               if(users[usersIDs[i]] != null){
+                  
+                sendTo(users[usersIDs[i]], { 
+                   type: "newzone", 
+                   zone: data.savedZone
+                });  
+               }
+             }
+             break;
+          case "answer": 
+             console.log("Sending answer to: ", data.name); 
+            
+             //for ex. UserB answers UserA 
+             var conn = users[data.name]; 
+            
+             if(conn != null) { 
+                socket.otherName = data.name; 
+                sendTo(conn, { 
+                   type: "answer", 
+                   answer: data.answer 
+                }); 
+             }
+            
+             break;
+
+          case "candidate": 
+             console.log("Sending candidate to:",data.name); 
+             var conn = users[data.name]; 
+            
+             if(conn != null) {
+                sendTo(conn, { 
+                   type: "candidate", 
+                   candidate: data.candidate 
+                }); 
+             }
+             else{
+              console.log("No candidate with such name"); 
+             }
+            
+             break;
+
+          case "leave": 
+             console.log("Disconnecting from", data.name); 
+             var conn = users[data.name]; 
+             conn.otherName = null; 
+            
+             //notify the other user so he can disconnect his peer socket 
+             if(conn != null) { 
+                sendTo(conn, { 
+                   type: "leave" 
+                }); 
+             } 
+            
+             break;
+               
+          default: 
+             sendTo(socket, { 
+                type: "error", 
+                message: "Command no found: " + data.type 
+             }); 
+          
+             break; 
+       } 
+      
+    });
+
+    socket.on("close", function() { 
+        if(socket.id) { 
+            usersIDs.splice(usersIDs.indexOf(socket.id), 1);
+            delete users[socket.id]; 
+            //console.log(usersIDs.length);
+            //console.log("user gone");
+        } 
+    });
+
   var conn;
   r.connect(config.rethinkdb).then(function(c) {
     conn = c;
@@ -89,6 +212,9 @@ wss.on("connection", function(socket) {
 });
 
 
+function sendTo(socket, message) { 
+   socket.send(JSON.stringify(message)); 
+}
 
 /*
  * Retrieve all zone items.
@@ -172,8 +298,16 @@ function updateZoneItem(req, res, next) {
     }
 
     result.full++;
-
-    io.sockets.emit('updatezone', {id:zoneItemID, action: "enter" });
+    for (var i = 0; i < usersIDs.length; i++){
+               if(users[usersIDs[i]] != null){
+                  
+                sendTo(users[usersIDs[i]], { 
+                   type: "updatezone",
+                   id:zoneItemID, 
+                   action: "enter" 
+                 });  
+               }
+             }
 
     r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
       if(err) {
@@ -200,7 +334,16 @@ function updateZoneItem(req, res, next) {
 
     result.full--;
 
-    io.sockets.emit('updatezone', {id:zoneItemID, action: "leave" });
+    for (var i = 0; i < usersIDs.length; i++){
+               if(users[usersIDs[i]] != null){
+                  
+                sendTo(users[usersIDs[i]], { 
+                   type: "updatezone",
+                   id:zoneItemID, 
+                   action: "leave" 
+                 });  
+               }
+             }
 
     r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
       if(err) {

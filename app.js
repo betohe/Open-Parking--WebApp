@@ -6,7 +6,7 @@ var r = require('rethinkdb');
 
 var config = require(__dirname + '/config.js');
 
-var app = require('express').createServer();
+var app = require('express')();
 var io = require('socket.io')(app);
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 

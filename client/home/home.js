@@ -1,31 +1,55 @@
 angular.module( 'sample.home', [
 'auth0'
 ])
-.controller( 'HomeCtrl', function HomeController( $scope, auth, $http, zoneStorage, $location, store, mySocket  ) {
+.controller( 'HomeCtrl', function HomeController( $scope, auth, $http, zoneStorage, $location, store, socket  ) {
 
   $scope.zones = [];
 
+var host = location.origin.replace(/^http/, 'ws');
+console.log(host);
+$scope.connection= new WebSocket(host);
+
+$scope.connection.onmessage = function (message) { 
+       console.log("Scope Got message", message.data);
+       if(IsJsonString(message.data)){
+           var data = JSON.parse(message.data); 
+          
+           switch(data.type) { 
+              case "newzone": 
+                  $scope.zones.push(data.zone);
+                 break; 
+              case "updatezone": 
+              console.log("Zone updated: "+data.id+", action: "+data.action);
+                  for(var i = 0; i < $scope.zones.length; i++){
+                    if($scope.zones[i].id == data.id){
+                      if(data.action === "enter"){
+                        $scope.zones[i].full++;
+                      }
+                      else if (data.action === "leave"){
+                        $scope.zones[i].full--;
+                      }
+                    }
+                  }
+                 break; 
+              case "answer": 
+                 $scope.onAnswer(data.answer); 
+                 break; 
+              case "candidate": 
+                 $scope.onCandidate(data.candidate); 
+                 break; 
+              default: 
+                 break; 
+           }
+        }
+        else{
+          console.log("not a json");
+        } 
+    };
+
   $scope.updateZone = function(pos) {
-    mySocket.emit('updatezone', $scope.zones[pos]); //op: enter or leave
+    socket.emit('updatezone', $scope.zones[pos]); //op: enter or leave
   }
 
-  mySocket.on('newzone', function (zone) {
-    $scope.zones.push(zone);
-  });
-
-  mySocket.on("updatezone", function(zone){
-    console.log("Zone updated: "+zone.id+", action: "+zone.action);
-    for(var i = 0; i < $scope.zones.length; i++){
-      if($scope.zones[i].id == zone.id){
-        if(zone.action === "enter"){
-          $scope.zones[i].full++;
-        }
-        else if (zone.action === "leave"){
-          $scope.zones[i].full--;
-        }
-      }
-    }
-  });
   $scope.auth = auth;
   $scope.callApi = function() {
     // Just call the API as you'd do using $http

@@ -125,7 +125,7 @@ angular.module( 'sample', [
                 
       }
   }
-});
+})
 
 ;
 

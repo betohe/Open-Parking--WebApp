@@ -12,7 +12,7 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 io.set('transports', ['xhr-polling']);
 io.set('polling duration', 10); 
-server.listen(config.socketio.port);
+//server.listen(config.socketio.port);
 console.log("Server started on port " + config.socketio.port);
 
 //For serving the index.html and all the other front-end assets.

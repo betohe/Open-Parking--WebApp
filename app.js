@@ -6,9 +6,9 @@ var r = require('rethinkdb');
 
 var config = require(__dirname + '/config.js');
 
-var app = require('express').createServer();
+var app = require('express')();
 var server = require('http').Server(app);
-var io = require('socket.io')(app);
+var io = require('socket.io')(server);
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 10); 

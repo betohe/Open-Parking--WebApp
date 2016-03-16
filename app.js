@@ -246,8 +246,8 @@ function handleError(err, req, res, next) {
  */
 function startExpress(connection) {
   app._rdbConn = connection;
-  app.listen(process.env.PORT || config.express.port);
-  console.log('Listening on port ' + config.express.port);
+  //app.listen(process.env.PORT || config.express.port);
+  //console.log('Listening on port ' + config.express.port);
 }
 
 /*

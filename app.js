@@ -10,7 +10,7 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 server.listen(config.socketio.port);
-console.log("Server started on port " + config.socketio.port);
+console.log("Server started on port " + config.socket.port);
 
 //For serving the index.html and all the other front-end assets.
 app.use(express.static(__dirname + '/client'));

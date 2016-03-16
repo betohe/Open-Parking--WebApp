@@ -10,6 +10,7 @@ console.log(host);
 $scope.connection= new WebSocket(host);
 
 $scope.connection.onmessage = function (message) { 
+  
        console.log("Scope Got message", message.data);
        if(IsJsonString(message.data)){
            var data = JSON.parse(message.data); 

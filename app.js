@@ -57,6 +57,8 @@ app.use(handleError);
 wss.on("connection", function(socket) {
 
   console.log('a user connected');
+
+  socket.send("Hello from server"); 
   socket.emit('welcome', { message: 'Welcome!', id: socket.id });
 
   socket.on("updatezone", function(zone){

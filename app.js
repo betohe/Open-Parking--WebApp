@@ -6,10 +6,12 @@ var r = require('rethinkdb');
 
 var config = require(__dirname + '/config.js');
 
-var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-server.listen(config.socketio.port);
+var app = require('express').createServer();
+var io = require('socket.io')(app);
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
 console.log("Server started on port " + config.socketio.port);
 
 //For serving the index.html and all the other front-end assets.

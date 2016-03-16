@@ -22,7 +22,7 @@ app.use(express.static(__dirname + '/client'));
 var server = http.createServer(app);
 server.listen(process.env.PORT || config.express.port);
 
-console.log("http server listening on %d", process.env.PORT || config.express.port));
+console.log("http server listening on %d", process.env.PORT || config.express.port);
 
 var wss = new WebSocketServer({server: server});
 console.log("websocket server created");

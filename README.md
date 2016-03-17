@@ -8,11 +8,11 @@ This generic parking app help the all companys that manage your parking, you onl
 1. Install Node.js in your server
 2. Install the RethinkDB in your server
 
-[To learn the basic of Angular.js enter to:](https://docs.angularjs.org/tutorial).
+To learn the basic of Angular.js enter to:[https://docs.angularjs.org/tutorial](https://docs.angularjs.org/tutorial).
 
-[To learn the basic of Node.js enter to:](http://www.tutorialspoint.com/nodejs/).
+To learn the basic of Node.js enter to: [http://www.tutorialspoint.com/nodejs/](http://www.tutorialspoint.com/nodejs/).
 
-[To learn the basic of RethinkDB enter to:](https://rethinkdb.com/docs/examples/).
+To learn the basic of RethinkDB enter to:[https://rethinkdb.com/docs/examples/](https://rethinkdb.com/docs/examples/).
 
 
 For install Node.js in windows server: https://nodejs.org/dist/v4.4.0/node-v4.4.0-x86.msi

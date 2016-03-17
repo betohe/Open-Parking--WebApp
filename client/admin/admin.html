@@ -196,15 +196,15 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="input-field col s3">
+                      <div class="input-field col s4">
                           <a ng-click="editZone($index)" class="btn" ng-hide="zone == editedZone">Edit</a>
                           <a ng-click="doneEditing($index)" class="btn" ng-show="zone == editedZone && newZone == null">Update</a>
                           <a ng-click="addZone()" class="btn" ng-show="newZone != null">Save</a>
                       </div>
-                      <div class="input-field col s3">
+                      <div class="input-field col s4">
                           <a ng-click="removeZone($index)" class="btn red" ng-show="zone == editedZone && newZone == null">Delete</a>
                       </div>
-                      <div class="input-field col s3">
+                      <div class="input-field col s4">
                           <a ng-click="cancelEditZone($index)" class="btn" ng-show="zone == editedZone">Cancel</a>
                       </div>
                     </div>

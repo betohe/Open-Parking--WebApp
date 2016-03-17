@@ -262,6 +262,7 @@ function plot(){
       $scope.zones.pop();
     }
     $scope.editedZone =  $scope.zones[i];
+    console.log($scope.editedZone);
     // Clone the original zone to restore it on demand.
     $scope.originalZone = angular.extend({}, $scope.zones[i]);
   };

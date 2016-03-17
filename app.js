@@ -43,12 +43,8 @@ app.route('/enterzone/:id')
 app.route('/leavezone/:id')
   .put(leaveZoneItem);
 
-app.route('/addintransitzone/:id')
-  .put(addInTransitZoneItem);
-
-app.route('/removeintransitzone/:id')
-  .put(removeInTransitZoneItem);
-
+app.route('/settransit/:id/:num')
+  .put(setInTransitZoneItem);
 //If we reach this middleware the route could not be handled and must be unknown.
 app.use(handle404);
 
@@ -372,22 +368,22 @@ function updateZoneItem(req, res, next) {
  * Zone Item enter transit
  */
 
- function addInTransitZoneItem(req, res, next) {
+ function setInTransitZoneItem(req, res, next) {
   var zoneItemID = req.params.id;
 
   r.table('zones').get(zoneItemID).run(req.app._rdbConn, function(err, result) {
     if(err) {
       return next(err);
     }
-
-    result.intransit++;
+    result.intransit = parseInt(req.params.num);
     for (var i = 0; i < usersIDs.length; i++){
                if(users[usersIDs[i]] != null){
                   
                 sendTo(users[usersIDs[i]], { 
                    type: "updatezone",
                    id:zoneItemID, 
-                   action: "addtransit" 
+                   action: "settransit",
+                   amount: req.params.num
                  });  
                }
              }
@@ -402,45 +398,6 @@ function updateZoneItem(req, res, next) {
   });
 }
 
-
- /*
- * Zone item leave transit
- */
-
- function removeInTransitZoneItem(req, res, next) {
-  var zoneItemID = req.params.id;
-
-  r.table('zones').get(zoneItemID).run(req.app._rdbConn, function(err, result) {
-    if(err) {
-      return next(err);
-    }
-
-    if(result.intransit>0){
-
-      result.intransit--;
-
-      for (var i = 0; i < usersIDs.length; i++){
-                 if(users[usersIDs[i]] != null){
-                    
-                  sendTo(users[usersIDs[i]], { 
-                     type: "updatezone",
-                     id:zoneItemID, 
-                     action: "removetransit" 
-                   });  
-                 }
-               }
-
-    }
-
-    r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
-      if(err) {
-        return next(err);
-      }
-
-      res.json(result2);
-    });
-  });
-}
 
 /*
  * Delete a zone item.

@@ -68,11 +68,10 @@ $scope.connection.onmessage = function (message) {
                       else if (data.action === "leave"){
                         $scope.zones[i].full--;
                       }
-                      else if (data.action === "addtransit"){
-                        $scope.zones[i].intransit++;
-                      }
-                      else if (data.action === "removetransit"){
-                        $scope.zones[i].intransit--;
+                      else if (data.action === "settransit"){
+                        console.log(data.amount);
+                        console.log($scope.zones[i]);
+                        $scope.zones[i].intransit = parseInt(data.amount);
                       }
                       plot();
                     }

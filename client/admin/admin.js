@@ -132,8 +132,7 @@ function plot(){
 
                     var textAtributes = textC
                          .text(function (d) { console.log(d.name); return (d.capacity-d.full+d.intransit)+"/"+d.capacity; })
-                        .attr("x", function (d) { return d.x + 15; })
-                        .attr("y", function (d) { return d.y + 15; })
+                        .attr("transform", function (d) { return "translate("+(d.x+d.w/2-20)+", "+d.y+") rotate("+d.angle+")"; })
                         .style('fill', 'black');
 
                     var rectanglesAtributes = rectangles

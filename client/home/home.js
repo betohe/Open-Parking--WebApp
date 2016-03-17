@@ -68,6 +68,12 @@ $scope.connection.onmessage = function (message) {
                       else if (data.action === "leave"){
                         $scope.zones[i].full--;
                       }
+                      else if (data.action === "addtransit"){
+                        $scope.zones[i].intransit++;
+                      }
+                      else if (data.action === "removetransit"){
+                        $scope.zones[i].intransit--;
+                      }
                       plot();
                     }
                   }
@@ -153,7 +159,7 @@ $scope.connection.onmessage = function (message) {
 
                     var textAtributes = textC
                          .text(function (d) { return (d.capacity-d.full+d.intransit)+"/"+d.capacity; })
-                        .attr("x", function (d) { return d.x + 15; })
+                        .attr("x", function (d) { return d.x -d.w/2; })
                         .attr("y", function (d) { return d.y + 15; })
                         .style('fill', 'black');
 

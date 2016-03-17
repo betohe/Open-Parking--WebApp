@@ -43,6 +43,12 @@ app.route('/enterzone/:id')
 app.route('/leavezone/:id')
   .put(leaveZoneItem);
 
+app.route('/addintransitzone/:id')
+  .put(addInTransitZoneItem);
+
+app.route('/removeintransitzone/:id')
+  .put(removeInTransitZoneItem);
+
 //If we reach this middleware the route could not be handled and must be unknown.
 app.use(handle404);
 
@@ -297,9 +303,11 @@ function updateZoneItem(req, res, next) {
       return next(err);
     }
 
-    result.full++;
+
+    if(result.full<result.capacity){
+      result.full++;
     for (var i = 0; i < usersIDs.length; i++){
-               if(users[usersIDs[i]] != null){
+            if(users[usersIDs[i]] != null){
                   
                 sendTo(users[usersIDs[i]], { 
                    type: "updatezone",
@@ -307,7 +315,8 @@ function updateZoneItem(req, res, next) {
                    action: "enter" 
                  });  
                }
-             }
+            }
+    }
 
     r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
       if(err) {
@@ -332,6 +341,8 @@ function updateZoneItem(req, res, next) {
       return next(err);
     }
 
+
+    if(result.full>0){
     result.full--;
 
     for (var i = 0; i < usersIDs.length; i++){
@@ -344,6 +355,82 @@ function updateZoneItem(req, res, next) {
                  });  
                }
              }
+    }
+
+    r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
+      if(err) {
+        return next(err);
+      }
+
+      res.json(result2);
+    });
+  });
+}
+
+
+/*
+ * Zone Item enter transit
+ */
+
+ function addInTransitZoneItem(req, res, next) {
+  var zoneItemID = req.params.id;
+
+  r.table('zones').get(zoneItemID).run(req.app._rdbConn, function(err, result) {
+    if(err) {
+      return next(err);
+    }
+
+    result.intransit++;
+    for (var i = 0; i < usersIDs.length; i++){
+               if(users[usersIDs[i]] != null){
+                  
+                sendTo(users[usersIDs[i]], { 
+                   type: "updatezone",
+                   id:zoneItemID, 
+                   action: "addtransit" 
+                 });  
+               }
+             }
+
+    r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
+      if(err) {
+        return next(err);
+      }
+
+      res.json(result2);
+    });
+  });
+}
+
+
+ /*
+ * Zone item leave transit
+ */
+
+ function removeInTransitZoneItem(req, res, next) {
+  var zoneItemID = req.params.id;
+
+  r.table('zones').get(zoneItemID).run(req.app._rdbConn, function(err, result) {
+    if(err) {
+      return next(err);
+    }
+
+    if(result.intransit>0){
+
+      result.intransit--;
+
+      for (var i = 0; i < usersIDs.length; i++){
+                 if(users[usersIDs[i]] != null){
+                    
+                  sendTo(users[usersIDs[i]], { 
+                     type: "updatezone",
+                     id:zoneItemID, 
+                     action: "removetransit" 
+                   });  
+                 }
+               }
+
+    }
 
     r.table('zones').get(zoneItemID).update(result, {returnChanges: true}).run(req.app._rdbConn, function(err, result2) {
       if(err) {

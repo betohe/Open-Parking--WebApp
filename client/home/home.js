@@ -139,8 +139,8 @@ $scope.connection.onmessage = function (message) {
 
                     d3.select("#chart").select("svg").remove();
                     var svgContainer = d3.select("#chart").append("svg")
-                                    .attr("width", 400)
-                                    .attr("height", 500);
+                                    .attr("width", 542)
+                                    .attr("height", 706);
                     var rectangles = svgContainer.selectAll("rect")
                         .data($scope.zones)
                         .enter()
@@ -152,19 +152,18 @@ $scope.connection.onmessage = function (message) {
                         .append("text");
 
                     var textAtributes = textC
-                         .text(function (d) { return (d.capacity-d.full)+"/"+d.capacity; })
+                         .text(function (d) { return (d.capacity-d.full+d.intransit)+"/"+d.capacity; })
                         .attr("x", function (d) { return d.x + 15; })
                         .attr("y", function (d) { return d.y + 15; })
                         .style('fill', 'black');
 
                     var rectanglesAtributes = rectangles
-                        .attr("x", function (d) { return d.x; })
-                        .attr("y", function (d) { return d.y; })
+                        .attr("transform", function (d) { return "translate("+d.x+", "+d.y+") rotate("+d.angle+")"; })
                         .attr("width", function (d) { return d.w; })
                         .attr("height", function (d) { return d.h; })
                         .attr("opacity", 0.5)
                         .attr('fill', function(d) {
-                                if (d.full/d.capacity <= 0.25) { // 0.25 is a percentage value representing the data
+                                if ((d.full - d.intransit)/d.capacity <= 0.25) { // 0.25 is a percentage value representing the data
                                   return 'green';
                                 }
                                 else if (d.full/d.capacity  <= 0.50) {

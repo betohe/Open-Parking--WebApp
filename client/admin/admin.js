@@ -11,10 +11,13 @@ angular.module( 'sample.admin', [
   $scope.newZoneY = null;
   $scope.newZoneW = null;
   $scope.newZoneH = null;
-
+  $scope.angle = null;
   $scope.newZoneCap = null;
   $scope.editedZone = null;
+
+  $scope.newZone = null;
   $scope.saving = false;
+  $scope.loaded = false;
 
 
 var host = location.origin.replace(/^http/, 'ws');
@@ -75,6 +78,7 @@ $scope.connection= new WebSocket(host);
 
   zoneStorage.get().success(function(zones) {
     $scope.zones = zones;
+    $scope.loaded = true;
   }).error(function(error) {
     alert('Failed to load TODOs');
 
@@ -87,6 +91,7 @@ $scope.connection= new WebSocket(host);
 
   $scope.drawCanvas= function(i) {
       //console.log("draw; "+i)
+      plot();
       d3.select("#canvas"+$scope.zones[i].id).select("svg").remove();
       var svgContainer = d3.select("#canvas"+$scope.zones[i].id).append("svg")
                                       .attr("width", $scope.zones[i].w)
@@ -95,7 +100,7 @@ $scope.connection= new WebSocket(host);
                               .attr("y", 5)
                               .attr("width", $scope.zones[i].w)
                               .attr("height", $scope.zones[i].h)
-                              .attr('fill', colorPercentage($scope.zones[i].full/$scope.zones[i].capacity));
+                              .attr('fill', colorPercentage(($scope.zones[i].full-$scope.zones[i].intransit)/$scope.zones[i].capacity));
 
       d3.select("#edcanvas"+$scope.zones[i].id).select("svg").remove();
       edsvgContainer = d3.select("#edcanvas"+$scope.zones[i].id).append("svg")
@@ -105,10 +110,52 @@ $scope.connection= new WebSocket(host);
                               .attr("y", 5)
                               .attr("width", $scope.zones[i].w)
                               .attr("height", $scope.zones[i].h)
-                              .attr('fill', colorPercentage($scope.zones[i].full/$scope.zones[i].capacity));
+                              .attr('fill', colorPercentage(($scope.zones[i].full-$scope.zones[i].intransit)/$scope.zones[i].capacity));
                               //console.log($scope.zones[i]);
   }
 
+function plot(){
+
+                    d3.select("#adminchart").select("svg").remove();
+                    var svgContainer = d3.select("#adminchart").append("svg")
+                                    .attr("width", 542)
+                                    .attr("height", 706).append("g");
+                    var rectangles = svgContainer.selectAll("rect")
+                        .data($scope.zones)
+                        .enter()
+                        .append("rect");
+
+                    var textC = svgContainer.selectAll('text')
+                        .data($scope.zones)
+                        .enter()
+                        .append("text");
+
+                    var textAtributes = textC
+                         .text(function (d) { console.log(d.name); return (d.capacity-d.full+d.intransit)+"/"+d.capacity; })
+                        .attr("x", function (d) { return d.x + 15; })
+                        .attr("y", function (d) { return d.y + 15; })
+                        .style('fill', 'black');
+
+                    var rectanglesAtributes = rectangles
+                        .attr("transform", function (d) { return "translate("+d.x+", "+d.y+") rotate("+d.angle+")"; })
+                        .attr("width", function (d) { return d.w; })
+                        .attr("height", function (d) { return d.h; })
+                        .attr("opacity", 0.5)
+                        .attr('fill', function(d) {
+                                if ((d.full - d.intransit)/d.capacity <= 0.25) { // 0.25 is a percentage value representing the data
+                                  return 'green';
+                                }
+                                else if (d.full/d.capacity  <= 0.50) {
+                                  return 'yellow';
+                                }
+                                else if (d.full/d.capacity  <= 0.75) {
+                                  return 'orange';
+                                }
+                                else if (d.full/d.capacity <= 1) {
+                                  return 'red';
+                                }
+                              });
+  }
 
   function colorPercentage(val){
                                 if (val <= 0.25) { // 0.25 is a percentage value representing the data
@@ -126,26 +173,21 @@ $scope.connection= new WebSocket(host);
                               }
 
   $scope.addZone = function () {
-    var newZone = {
-      "id": $scope.newZoneid.trim(),
-      "name": $scope.newZoneName.trim(),
-      "x": $scope.newZoneX,
-      "y": $scope.newZoneY,
-      "w": $scope.newZoneW,
-      "h": $scope.newZoneH,
-      "capacity": $scope.newZoneCap,
-      "full": 0
-    }
-    if (!$scope.newZoneid.trim().length || !$scope.newZoneName.trim().length || $scope.newZoneCap <= 0 || $scope.newZoneX < 0 || $scope.newZoneY < 0) {
+    var newZone = $scope.zones[0];
+    if (!newZone.id.trim().length || !newZone.name.trim().length || newZone.capacity <= 0 
+          || newZone.x < 0 || newZone.y < 0) {
       alert("wrong input");
       return;
     }
     zoneStorage.create(newZone).success(function(savedZone) {
-      $scope.zones.push(savedZone);
       send({ 
              type: "zonecreated", 
              savedZone:  savedZone
           }); 
+        $scope.editedZone = null;
+        $scope.newZone = null;
+
+
     }).error(function(error) {
       alert('Failed to save the new Zone');
     });
@@ -169,6 +211,7 @@ $scope.connection= new WebSocket(host);
       else {
         $scope.zones[$scope.zones.indexOf(zone)] = newZone;
         $scope.editedZone = null;
+        $scope.newZone = null;
       }
     }).error(function() {
       console.log('fds');
@@ -177,23 +220,60 @@ $scope.connection= new WebSocket(host);
 
   };
 
+
+  $scope.initNewZone = function(){
+      $scope.newZone = {
+      "id": null,
+      "name": null,
+      "x": 10,
+      "y": 10,
+      "w": 40,
+      "h": 100,
+      "capacity": null,
+      "full": 0,
+      "intransit": 0,
+      "angle": 0
+    };
+    $scope.zones.splice(0,0,$scope.newZone);
+    $scope.editedZone =  $scope.newZone;
+  }
+
+  $scope.deinitNewZone = function(){
+      $scope.newZone = null;
+      $scope.zones.splice(0,1);
+  }
+
   $scope.activeZone = function (id){
     console.log(id);
   }
 
   $scope.cancelEditZone = function (i) {
+    if($scope.newZone!=null){  
+      $scope.newZone = null;
+      $scope.zones.splice(0,1);
+    }
     $scope.editedZone =  null;
     // Clone the original zone to restore it on demand.
     $scope.originalZone = null;
   };
 
   $scope.editZone = function (i) {
+    if($scope.newZone!=null){  
+      $scope.newZone = null;
+      $scope.zones.pop();
+    }
     $scope.editedZone =  $scope.zones[i];
     // Clone the original zone to restore it on demand.
     $scope.originalZone = angular.extend({}, $scope.zones[i]);
   };
 
   $scope.doneEditing = function (i) {
+    var newZone = $scope.editedZone;
+    if (!newZone.id.trim().length || !newZone.name.trim().length || newZone.capacity <= 0 
+          || newZone.x < 0 || newZone.y < 0) {
+      alert("wrong input");
+      return;
+    }
     if($scope.editedZone.id !== $scope.originalZone.id){
       console.log("different!");
       zoneStorage.delete($scope.originalZone.id).success(function() {
@@ -256,6 +336,7 @@ $scope.connection= new WebSocket(host);
 
     zoneStorage.delete($scope.zones[i].id).success(function() {
       $scope.zones.splice(i, 1);
+      plot();
     }).error(function() {
       alert('Failed to delete this TODO');
     });

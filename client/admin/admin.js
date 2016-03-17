@@ -120,6 +120,13 @@ function plot(){
                     var svgContainer = d3.select("#adminchart").append("svg")
                                     .attr("width", 542)
                                     .attr("height", 706).append("g");
+                                    
+                    svgContainer.append("svg:image")
+   .attr('x',-9)
+   .attr('y',-12)
+   .attr('width', 20)
+   .attr('height', 24)
+   .attr("xlink:href","assets/images/baby.png")
                     var rectangles = svgContainer.selectAll("rect")
                         .data($scope.zones)
                         .enter()
@@ -131,9 +138,12 @@ function plot(){
                         .append("text");
 
                     var textAtributes = textC
-                         .text(function (d) { console.log(d.name); return (d.capacity-d.full+d.intransit)+"/"+d.capacity; })
-                        .attr("transform", function (d) { return "translate("+(d.x+d.w/2-20)+", "+d.y+") rotate("+d.angle+")"; })
-                        .style('fill', 'black');
+                         .text(function (d) { return d.id; })
+                        .attr("transform", function (d) { return "translate("+(d.x+d.w/2-10)+", "+(d.y+d.h/2)+") rotate("+d.angle+")"; })
+                        .style('fill', 'white').on("click", function(d, i){
+                                    lightboxIn('spacelight','spacefade');
+                                    setZoneLightBox(d);
+                                });
 
                     var rectanglesAtributes = rectangles
                         .attr("transform", function (d) { return "translate("+d.x+", "+d.y+") rotate("+d.angle+")"; })
@@ -153,7 +163,11 @@ function plot(){
                                 else if (d.full/d.capacity <= 1) {
                                   return 'red';
                                 }
-                              });
+                              }).on("click", function(d, i){
+                                    lightboxIn('spacelight','spacefade');
+                                    setZoneLightBox(d);
+                                });
+
   }
 
   function colorPercentage(val){
@@ -170,6 +184,11 @@ function plot(){
                                   return 'red';
                                 }
                               }
+
+  function setZoneLightBox(zone){
+    document.getElementById('zonelightboxname').innerHTML = zone.name;
+    document.getElementById('zonelightboxspaces').innerHTML = (zone.capacity-zone.full+zone.intransit);
+  }
 
   $scope.addZone = function () {
     var newZone = $scope.zones[0];
@@ -218,6 +237,8 @@ function plot(){
     });
 
   };
+
+
 
 
   $scope.initNewZone = function(){

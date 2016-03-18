@@ -1,3 +1,8 @@
 .login-page .login-box {
   padding: 100px 0;
 }
+
+#relativePosition{
+	margin: auto;
+    width: 60%;
+}

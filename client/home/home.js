@@ -148,11 +148,11 @@ $scope.connection.onmessage = function (message) {
                                     .attr("height", 706);
 
                     svgContainer.append("svg:image")
-   .attr('x',-9)
-   .attr('y',-12)
-   .attr('width', 20)
-   .attr('height', 24)
-   .attr("xlink:href","assets/images/baby.png")
+   .attr('x',9)
+   .attr('y',-20)
+   .attr('width', 200)
+   .attr('height', 240)
+   .attr("xlink:href","assets/images/legend.png");
                     var rectangles = svgContainer.selectAll("rect")
                         .data($scope.zones)
                         .enter()
@@ -164,7 +164,7 @@ $scope.connection.onmessage = function (message) {
                         .append("text");
 
                     var textAtributes = textC
-                         .text(function (d) { return d.id; })
+                         .text(function (d) { return (d.capacity-d.full+d.intransit); })
                         .attr("transform", function (d) { return "translate("+(d.x+d.w/2-10)+", "+(d.y+d.h/2)+") rotate("+d.angle+")"; })
                         .style('fill', 'white').on("click", function(d, i){
                                     lightboxIn('spacelight','spacefade');
@@ -194,7 +194,20 @@ $scope.connection.onmessage = function (message) {
                                     setZoneLightBox(d);
                                 });
 
-    console.log($scope.zones);
+                      svgContainer.append("rect")
+                        .attr("x", 15)
+                        .attr("y", 180)
+                        .attr("width", 200)
+                        .attr("height", 30)
+                        .attr("opacity", 0.5); 
+                       svgContainer.append("text")
+                        .attr("x", 23)
+                        .attr("y", 195)
+                        .attr("dy", ".35em")
+                        .text("Labels = available spaces")
+                        .style('fill', 'white'); 
+
+    //console.log($scope.zones);
   }
   function setZoneLightBox(zone){
     document.getElementById('zonelightboxname').innerHTML = zone.name;

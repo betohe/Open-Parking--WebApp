@@ -30,7 +30,14 @@ You need download our sour from:
 The original source was taken from:
 [https://github.com/OpenParking/Open-Parking--WebApp.git](https://github.com/OpenParking/Open-Parking--WebApp.git)
 
-==========================================================================================================================
+===========================================================================================================================
+
+## Install the packages:## 
+1.  WebSocket
+2.  Express
+3.  Websocket Server
+
+=============================================================================================================================
 
 ## Run ##
 

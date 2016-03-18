@@ -85,9 +85,9 @@
 .white_content {
     display: none;
 	position: relative;
-    top: 25%;
-    left: 25%;
-    width: 50%;
+    top: 15%;
+    left: 10%;
+    width: 80%;
     padding: 16px;
     border: 0px solid #ccc;
     background-color: white;

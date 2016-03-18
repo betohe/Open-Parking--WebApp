@@ -202,6 +202,7 @@ function plot(){
   function setZoneLightBox(zone){
     document.getElementById('zonelightboxname').innerHTML = zone.name;
     document.getElementById('zonelightboxspaces').innerHTML = (zone.capacity-zone.full+zone.intransit) + " spaces available.";
+    document.getElementById('zonestreaming').setAttribute('src', zone.streamurl);
   }
 
   $scope.addZone = function () {
@@ -266,7 +267,8 @@ function plot(){
       "capacity": null,
       "full": 0,
       "intransit": 0,
-      "angle": 0
+      "angle": 0,
+      "streamurl": null
     };
     $scope.zones.splice(0,0,$scope.newZone);
     $scope.editedZone =  $scope.newZone;

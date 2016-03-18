@@ -252,7 +252,9 @@ function createZoneItem(req, res, next) {
       return next(err);
     }
 
-    res.json(result.changes[0].new_val);
+    if(result != undefined && result.changes.length>0){
+      res.json(result.changes[0].new_val);
+    }
   });
 }
 

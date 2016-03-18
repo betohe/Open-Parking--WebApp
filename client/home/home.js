@@ -212,6 +212,7 @@ $scope.connection.onmessage = function (message) {
   function setZoneLightBox(zone){
     document.getElementById('zonelightboxname').innerHTML = zone.name;
     document.getElementById('zonelightboxspaces').innerHTML = (zone.capacity-zone.full+zone.intransit) + " spaces available.";
+    document.getElementById('zonestreaming').setAttribute('src', zone.streamurl);
   }
 
 
